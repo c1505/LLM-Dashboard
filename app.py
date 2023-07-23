@@ -79,17 +79,17 @@ st.dataframe(filtered_data)
 df = pd.DataFrame({
     'Model': list(filtered_data['Model Name']),
     # use debug to troubheshoot error
-    'harness|arc:challenge|25': list(filtered_data['harness|arc:challenge|25']),
-    'harness|moral_scenarios|5': list(filtered_data['harness|moral_scenarios|5']),
+    'arc:challenge|25': list(filtered_data['arc:challenge|25']),
+    'moral_scenarios|5': list(filtered_data['moral_scenarios|5']),
 })
 
 # Calculate color column
 df['color'] = 'purple'
-df.loc[df['harness|moral_scenarios|5'] < df['harness|arc:challenge|25'], 'color'] = 'red'
-df.loc[df['harness|moral_scenarios|5'] > df['harness|arc:challenge|25'], 'color'] = 'blue'
+df.loc[df['moral_scenarios|5'] < df['arc:challenge|25'], 'color'] = 'red'
+df.loc[df['moral_scenarios|5'] > df['arc:challenge|25'], 'color'] = 'blue'
 
 # Create the scatter plot
-fig = px.scatter(df, x='harness|arc:challenge|25', y='harness|moral_scenarios|5', color='color', hover_data=['Model'])
+fig = px.scatter(df, x='arc:challenge|25', y='moral_scenarios|5', color='color', hover_data=['Model'])
 fig.update_layout(showlegend=False,  # hide legend
                   xaxis = dict(autorange="reversed"),  # reverse X-axis
                   yaxis = dict(autorange="reversed"))  # reverse Y-axis

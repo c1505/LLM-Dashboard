@@ -73,7 +73,7 @@ data_provider = MultiURLData()
 
 st.title('Hugging Face Model Benchmarking including MMLU by task data')
 
-filters = st.checkbox('Select Models and Columns')
+filters = st.checkbox('Select Models and Evaluations')
 
 # Create defaults for selected columns and models
 selected_columns = data_provider.data.columns.tolist()
@@ -127,6 +127,16 @@ def create_plot(df, arc_column, moral_column, models=None):
 
 st.header('Overall benchmark comparison')
 
+st.header('Custom scatter plots')
+selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
+selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=1)
+
+if selected_x_column != selected_y_column:    # Avoid creating a plot with the same column on both axes
+    fig = create_plot(filtered_data, selected_x_column, selected_y_column)
+    st.plotly_chart(fig)
+else:
+    st.write("Please select different columns for the x and y axes.")
+
 fig = create_plot(filtered_data, 'arc:challenge|25', 'hellaswag|10')
 st.plotly_chart(fig)
 
@@ -157,3 +167,6 @@ st.plotly_chart(fig)
 
 fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
+
+
+

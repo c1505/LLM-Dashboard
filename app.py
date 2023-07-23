@@ -71,7 +71,7 @@ class MultiURLData:
 
 data_provider = MultiURLData()
 
-st.title('Hugging Face Model Benchmarking including MMLU by task data')
+st.title('Model Evaluation Results including MMLU by task')
 
 filters = st.checkbox('Select Models and Evaluations')
 

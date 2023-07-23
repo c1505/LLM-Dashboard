@@ -51,11 +51,16 @@ class MultiURLData:
         # create a new column that averages the results from each of the columns with a name that start with MMLU
         data['MMLU_average'] = data.filter(regex='MMLU').mean(axis=1)
 
-        # move the MMLU_average column to the the second column in the dataframe
+        # move the MMLU_average column to the third column in the dataframe
         cols = data.columns.tolist()
-        cols = cols[:1] + cols[-1:] + cols[1:-1]
+        cols = cols[:2] + cols[-1:] + cols[2:-1]
         data = data[cols]
-        data
+
+        # # move the MMLU_average column to the the second column in the dataframe
+        # cols = data.columns.tolist()
+        # cols = cols[:1] + cols[-1:] + cols[1:-1]
+        # data = data[cols]
+        # data
 
         return data
     
@@ -68,7 +73,7 @@ data_provider = MultiURLData()
 
 st.title('Hugging Face Model Benchmarking including MMLU by task data')
 
-filters = st.checkbox('Add filters')
+filters = st.checkbox('Select Models and Columns')
 
 # Create defaults for selected columns and models
 selected_columns = data_provider.data.columns.tolist()

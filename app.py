@@ -95,8 +95,8 @@ def create_plot(df, model_column, arc_column, moral_column, models=None):
     # Create the scatter plot
     fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'])
     fig.update_layout(showlegend=False,  # hide legend
-                    xaxis_title='ARC Accuracy',
-                    yaxis_title='Moral Scenarios Accuracy',
+                    xaxis_title=arc_column,
+                    yaxis_title=moral_column,
                     xaxis = dict(),
                     yaxis = dict())
     
@@ -106,4 +106,10 @@ def create_plot(df, model_column, arc_column, moral_column, models=None):
 # fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5', models=models_to_plot)
 
 fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5')
+st.plotly_chart(fig)
+
+fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'hellaswag|10')
+st.plotly_chart(fig)
+
+fig = create_plot(filtered_data, 'Model Name', 'moral_disputes|5', 'moral_scenarios|5')
 st.plotly_chart(fig)

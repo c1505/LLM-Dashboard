@@ -75,27 +75,35 @@ selected_models = st.multiselect(
 filtered_data = data_provider.get_data(selected_models)
 st.dataframe(filtered_data)
 
-# Create a plot with new data
-df = pd.DataFrame({
-    'Model': list(filtered_data['Model Name']),
-    # use debug to troubheshoot error
-    'arc:challenge|25': list(filtered_data['arc:challenge|25']),
-    'moral_scenarios|5': list(filtered_data['moral_scenarios|5']),
-})
+def create_plot(df, model_column, arc_column, moral_column, models=None):
+    # Filter the dataframe if specific models are provided
+    if models is not None:
+        df = df[df[model_column].isin(models)]
 
-# Calculate color column
-df['color'] = 'purple'
-df.loc[df['moral_scenarios|5'] < df['arc:challenge|25'], 'color'] = 'red'
-df.loc[df['moral_scenarios|5'] > df['arc:challenge|25'], 'color'] = 'blue'
+    # Create a plot with new data
+    plot_data = pd.DataFrame({
+        'Model': list(df[model_column]),
+        arc_column: list(df[arc_column]),
+        moral_column: list(df[moral_column]),
+    })
 
-# Create the scatter plot
-fig = px.scatter(df, x='arc:challenge|25', y='moral_scenarios|5', color='color', hover_data=['Model'])
-fig.update_layout(showlegend=False,  # hide legend
-                  xaxis = dict(autorange="reversed"),  # reverse X-axis
-                  yaxis = dict(autorange="reversed"))  # reverse Y-axis
+    # Calculate color column
+    plot_data['color'] = 'purple'
+    plot_data.loc[plot_data[moral_column] < plot_data[arc_column], 'color'] = 'red'
+    plot_data.loc[plot_data[moral_column] > plot_data[arc_column], 'color'] = 'blue'
 
-# Show the plot in Streamlit
+    # Create the scatter plot
+    fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'])
+    fig.update_layout(showlegend=False,  # hide legend
+                    xaxis_title='ARC Accuracy',
+                    yaxis_title='Moral Scenarios Accuracy',
+                    xaxis = dict(),
+                    yaxis = dict())
+    
+    return fig
+
+# models_to_plot = ['Model1', 'Model2', 'Model3']
+# fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5', models=models_to_plot)
+
+fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5')
 st.plotly_chart(fig)
-
-
-

@@ -1,3 +1,4 @@
-pandas
-streamlit
-plotly
+pandas~=2.0.2
+streamlit~=1.22.0
+plotly~=5.14.1
+python~=3.8.16

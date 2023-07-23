@@ -27,9 +27,12 @@ class MultiURLData:
 
                 df = df.rename(columns={'acc': model_name})
 
-                df.index = df.index.str.replace('hendrycksTest-', '')
+                df.index = df.index.str.replace('hendrycksTest-', '', regex=True)
 
-                df.index = df.index.str.replace('harness\\|', '')
+                df.index = df.index.str.replace('harness\|', '', regex=True)
+
+                # remove |5 from the index
+                df.index = df.index.str.replace('\|5', '', regex=True)
 
                 dataframes.append(df[[model_name]])
 
@@ -89,11 +92,13 @@ def create_plot(df, model_column, arc_column, moral_column, models=None):
 
     # Calculate color column
     plot_data['color'] = 'purple'
-    plot_data.loc[plot_data[moral_column] < plot_data[arc_column], 'color'] = 'red'
-    plot_data.loc[plot_data[moral_column] > plot_data[arc_column], 'color'] = 'blue'
 
-    # Create the scatter plot
-    fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'])
+    # # TODO maybe change this
+    # plot_data.loc[plot_data[moral_column] < plot_data[arc_column], 'color'] = 'red'
+    # plot_data.loc[plot_data[moral_column] > plot_data[arc_column], 'color'] = 'blue'
+
+    # Create the scatter plot with trendline
+    fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'], trendline="ols") #other option ols
     fig.update_layout(showlegend=False,  # hide legend
                     xaxis_title=arc_column,
                     yaxis_title=moral_column,
@@ -102,14 +107,15 @@ def create_plot(df, model_column, arc_column, moral_column, models=None):
     
     return fig
 
+
 # models_to_plot = ['Model1', 'Model2', 'Model3']
 # fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5', models=models_to_plot)
 
-fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5')
+fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios')
 st.plotly_chart(fig)
 
 fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'hellaswag|10')
 st.plotly_chart(fig)
 
-fig = create_plot(filtered_data, 'Model Name', 'moral_disputes|5', 'moral_scenarios|5')
+fig = create_plot(filtered_data, 'Model Name', 'moral_disputes', 'moral_scenarios')
 st.plotly_chart(fig)

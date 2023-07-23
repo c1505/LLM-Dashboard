@@ -135,6 +135,12 @@ st.plotly_chart(fig)
 fig = create_plot(filtered_data, 'Model Name', 'hellaswag|10', 'MMLU_average')
 st.plotly_chart(fig)
 
+# create a new dataframe that only has the 50 highest performing models on MMLU_average
+st.header('Top 50 models on MMLU_average')
+top_50 = filtered_data.nlargest(50, 'MMLU_average')
+fig = create_plot(top_50, 'Model Name', 'arc:challenge|25', 'MMLU_average')
+st.plotly_chart(fig)
+
 # Add heading to page to say Moral Scenarios
 st.header('Moral Scenarios')
 
@@ -155,3 +161,4 @@ st.plotly_chart(fig)
 # create a histogram of moral disputes
 fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
+

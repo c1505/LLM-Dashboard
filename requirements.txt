@@ -1,9 +1,9 @@
 # pandas~=2.0.2
 # streamlit~=1.22.0
 # plotly~=5.14.1
-pandas==2.0.3
 streamlit==1.22.0
 plotly==5.14.1
+pandas==2.0.3
 # python~=3.10
 # pandas==1.5.3
 # streamlit==1.21.0

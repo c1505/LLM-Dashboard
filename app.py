@@ -25,14 +25,15 @@ class MultiURLData:
                 data = json.load(f)
                 df = pd.DataFrame(data['results']).T
 
+
+                # data cleanup
                 df = df.rename(columns={'acc': model_name})
-
-                df.index = df.index.str.replace('hendrycksTest-', '', regex=True)
-
+                # Replace 'hendrycksTest-' with a more descriptive column name
+                df.index = df.index.str.replace('hendrycksTest-', 'MMLU_', regex=True)
                 df.index = df.index.str.replace('harness\|', '', regex=True)
-
                 # remove |5 from the index
                 df.index = df.index.str.replace('\|5', '', regex=True)
+
 
                 dataframes.append(df[[model_name]])
 
@@ -44,7 +45,18 @@ class MultiURLData:
         cols = cols[-1:] + cols[:-1]
         data = data[cols]
 
+        # create a new column that averages the results from each of the columns with a name that start with MMLU
+        data['MMLU_average'] = data.filter(regex='MMLU').mean(axis=1)
+
+        # move the MMLU_average column to the the second column in the dataframe
+        cols = data.columns.tolist()
+        cols = cols[:1] + cols[-1:] + cols[1:-1]
+        data = data[cols]
+        data
+
         return data
+    
+
 
     def get_data(self, selected_models):
         filtered_data = self.data[self.data['Model Name'].isin(selected_models)]
@@ -75,6 +87,7 @@ selected_models = st.multiselect(
 
 
 # Get the filtered data and display it in a table
+st.header('Sortable table')
 filtered_data = data_provider.get_data(selected_models)
 st.dataframe(filtered_data)
 
@@ -111,11 +124,34 @@ def create_plot(df, model_column, arc_column, moral_column, models=None):
 # models_to_plot = ['Model1', 'Model2', 'Model3']
 # fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5', models=models_to_plot)
 
-fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios')
-st.plotly_chart(fig)
+st.header('Overall benchmark comparison')
 
 fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'hellaswag|10')
 st.plotly_chart(fig)
 
-fig = create_plot(filtered_data, 'Model Name', 'moral_disputes', 'moral_scenarios')
+fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'MMLU_average')
+st.plotly_chart(fig)
+
+fig = create_plot(filtered_data, 'Model Name', 'hellaswag|10', 'MMLU_average')
+st.plotly_chart(fig)
+
+# Add heading to page to say Moral Scenarios
+st.header('Moral Scenarios')
+
+fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'MMLU_moral_scenarios')
+st.plotly_chart(fig)
+
+
+fig = create_plot(filtered_data, 'Model Name', 'MMLU_moral_disputes', 'MMLU_moral_scenarios')
+st.plotly_chart(fig)
+
+fig = create_plot(filtered_data, 'Model Name', 'MMLU_average', 'MMLU_moral_scenarios')
+st.plotly_chart(fig)
+
+# create a histogram of moral scenarios
+fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hover_data=filtered_data.columns)
+st.plotly_chart(fig)
+
+# create a histogram of moral disputes
+fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)

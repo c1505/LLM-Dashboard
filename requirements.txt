@@ -4,3 +4,5 @@ pandas==1.5.3
 
 # Other
 plotly==5.14.1
+statsmodels
+matplotlib

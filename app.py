@@ -45,6 +45,9 @@ class MultiURLData:
         cols = cols[-1:] + cols[:-1]
         data = data[cols]
 
+        # remove the Model Name column
+        data = data.drop(['Model Name'], axis=1)
+
         # create a new column that averages the results from each of the columns with a name that start with MMLU
         data['MMLU_average'] = data.filter(regex='MMLU').mean(axis=1)
 
@@ -56,109 +59,96 @@ class MultiURLData:
 
         return data
     
-
-
+    # filter data based on the index
     def get_data(self, selected_models):
-        filtered_data = self.data[self.data['Model Name'].isin(selected_models)]
+        filtered_data = self.data[self.data.index.isin(selected_models)]
         return filtered_data
 
 data_provider = MultiURLData()
 
-st.title('Leaderboard')
+st.title('Hugging Face Model Benchmarking including MMLU by task data')
 
-# TODO actually use these checkboxes as filters
-## Desired behavior
-## model and column selection is hidden by default
-## when the user clicks the checkbox, the model and column selection appears
 filters = st.checkbox('Add filters')
 
-# Create checkboxes for each column
-selected_columns = st.multiselect(
-    'Select Columns',
-    data_provider.data.columns.tolist(),
-    default=data_provider.data.columns.tolist()
-)
+# Create defaults for selected columns and models
+selected_columns = data_provider.data.columns.tolist()
+selected_models = data_provider.data.index.tolist()
 
-selected_models = st.multiselect(
-    'Select Models',
-    data_provider.data['Model Name'].tolist(),
-    default=data_provider.data['Model Name'].tolist()
-)
+if filters:
+    # Create checkboxes for each column
+    selected_columns = st.multiselect(
+        'Select Columns',
+        data_provider.data.columns.tolist(),
+        default=selected_columns
+    )
 
+    selected_models = st.multiselect(
+        'Select Models',
+        data_provider.data.index.tolist(),
+        default=selected_models
+    )
 
 # Get the filtered data and display it in a table
 st.header('Sortable table')
 filtered_data = data_provider.get_data(selected_models)
-st.dataframe(filtered_data)
 
-def create_plot(df, model_column, arc_column, moral_column, models=None):
-    # Filter the dataframe if specific models are provided
+# sort the table by the MMLU_average column
+filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
+st.dataframe(filtered_data[selected_columns])
+
+# The rest of your plotting code...
+
+def create_plot(df, arc_column, moral_column, models=None):
     if models is not None:
-        df = df[df[model_column].isin(models)]
+        df = df[df.index.isin(models)]
 
-    # Create a plot with new data
     plot_data = pd.DataFrame({
-        'Model': list(df[model_column]),
-        arc_column: list(df[arc_column]),
-        moral_column: list(df[moral_column]),
+        'Model': df.index,
+        arc_column: df[arc_column],
+        moral_column: df[moral_column],
     })
 
-    # Calculate color column
     plot_data['color'] = 'purple'
-
-    # # TODO maybe change this
-    # plot_data.loc[plot_data[moral_column] < plot_data[arc_column], 'color'] = 'red'
-    # plot_data.loc[plot_data[moral_column] > plot_data[arc_column], 'color'] = 'blue'
-
-    # Create the scatter plot with trendline
-    fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'], trendline="ols") #other option ols
-    fig.update_layout(showlegend=False,  # hide legend
-                    xaxis_title=arc_column,
-                    yaxis_title=moral_column,
-                    xaxis = dict(),
-                    yaxis = dict())
+    fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'], trendline="ols")
+    fig.update_layout(showlegend=False, 
+                      xaxis_title=arc_column,
+                      yaxis_title=moral_column,
+                      xaxis = dict(),
+                      yaxis = dict())
     
     return fig
 
 
-# models_to_plot = ['Model1', 'Model2', 'Model3']
-# fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'moral_scenarios|5', models=models_to_plot)
 
 st.header('Overall benchmark comparison')
 
-fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'hellaswag|10')
+fig = create_plot(filtered_data, 'arc:challenge|25', 'hellaswag|10')
 st.plotly_chart(fig)
 
-fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'MMLU_average')
+fig = create_plot(filtered_data, 'arc:challenge|25', 'MMLU_average')
 st.plotly_chart(fig)
 
-fig = create_plot(filtered_data, 'Model Name', 'hellaswag|10', 'MMLU_average')
+fig = create_plot(filtered_data, 'hellaswag|10', 'MMLU_average')
 st.plotly_chart(fig)
 
-# create a new dataframe that only has the 50 highest performing models on MMLU_average
 st.header('Top 50 models on MMLU_average')
 top_50 = filtered_data.nlargest(50, 'MMLU_average')
-fig = create_plot(top_50, 'Model Name', 'arc:challenge|25', 'MMLU_average')
+fig = create_plot(top_50, 'arc:challenge|25', 'MMLU_average')
 st.plotly_chart(fig)
 
-# Add heading to page to say Moral Scenarios
 st.header('Moral Scenarios')
 
-fig = create_plot(filtered_data, 'Model Name', 'arc:challenge|25', 'MMLU_moral_scenarios')
+fig = create_plot(filtered_data, 'arc:challenge|25', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
-
-fig = create_plot(filtered_data, 'Model Name', 'MMLU_moral_disputes', 'MMLU_moral_scenarios')
+fig = create_plot(filtered_data, 'MMLU_moral_disputes', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
-fig = create_plot(filtered_data, 'Model Name', 'MMLU_average', 'MMLU_moral_scenarios')
+fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
-# create a histogram of moral scenarios
 fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
 
-# create a histogram of moral disputes
 fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
-

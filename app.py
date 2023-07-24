@@ -5,7 +5,7 @@ import fnmatch
 import json
 import plotly.express as px
 
-class MultiURLData:
+class ResultDataProcessor:
     def __init__(self):
         self.data = self.process_data()
 
@@ -48,6 +48,12 @@ class MultiURLData:
         # remove the Model Name column
         data = data.drop(['Model Name'], axis=1)
 
+        # remove the all column
+        data = data.drop(['all'], axis=1)
+
+        # remove the truthfulqa:mc|0 column
+        data = data.drop(['truthfulqa:mc|0'], axis=1)
+
         # create a new column that averages the results from each of the columns with a name that start with MMLU
         data['MMLU_average'] = data.filter(regex='MMLU').mean(axis=1)
 
@@ -63,7 +69,7 @@ class MultiURLData:
         filtered_data = self.data[self.data.index.isin(selected_models)]
         return filtered_data
 
-data_provider = MultiURLData()
+data_provider = ResultDataProcessor()
 
 st.title('Model Evaluation Results including MMLU by task')
 

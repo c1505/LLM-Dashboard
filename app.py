@@ -87,7 +87,7 @@ if filters:
         default=selected_models
     )
 
-# Get the filtered data and display it in a table
+# Get the filtered data
 st.header('Sortable table')
 filtered_data = data_provider.get_data(selected_models)
 
@@ -95,7 +95,15 @@ filtered_data = data_provider.get_data(selected_models)
 filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
 st.dataframe(filtered_data[selected_columns])
 
-# The rest of your plotting code...
+# CSV download
+csv = filtered_data.to_csv(index=True)
+st.download_button(
+    label="Download data as CSV",
+    data=csv,
+    file_name="model_evaluation_results.csv",
+    mime="text/csv",
+)
+
 
 def create_plot(df, arc_column, moral_column, models=None):
     if models is not None:
@@ -161,25 +169,3 @@ st.plotly_chart(fig)
 
 fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
-
-
-# download CSV
-
-# Get the filtered data and display it in a table
-st.header('Sortable table')
-filtered_data = data_provider.get_data(selected_models)
-
-# sort the table by the MMLU_average column
-filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
-st.dataframe(filtered_data[selected_columns])
-
-csv = filtered_data.to_csv(index=True)
-st.download_button(
-    label="Download data as CSV",
-    data=csv,
-    file_name="model_evaluation_results.csv",
-    mime="text/csv",
-)
-
-# The rest of your plotting code...
-

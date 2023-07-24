@@ -56,12 +56,6 @@ class MultiURLData:
         cols = cols[:2] + cols[-1:] + cols[2:-1]
         data = data[cols]
 
-        # # move the MMLU_average column to the the second column in the dataframe
-        # cols = data.columns.tolist()
-        # cols = cols[:1] + cols[-1:] + cols[1:-1]
-        # data = data[cols]
-        # data
-
         return data
     
     # filter data based on the index
@@ -169,4 +163,23 @@ fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover
 st.plotly_chart(fig)
 
 
+# download CSV
+
+# Get the filtered data and display it in a table
+st.header('Sortable table')
+filtered_data = data_provider.get_data(selected_models)
+
+# sort the table by the MMLU_average column
+filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
+st.dataframe(filtered_data[selected_columns])
+
+csv = filtered_data.to_csv(index=True)
+st.download_button(
+    label="Download data as CSV",
+    data=csv,
+    file_name="model_evaluation_results.csv",
+    mime="text/csv",
+)
+
+# The rest of your plotting code...
 

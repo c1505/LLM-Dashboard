@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import fnmatch
 import json
+import re
+import numpy as np
 
 class ResultDataProcessor:
     
@@ -31,6 +33,31 @@ class ResultDataProcessor:
                           .str.replace('\|5', '', regex=True))
         return df[[model_name]]
     
+    @staticmethod
+    def _extract_parameters(model_name):
+        """
+        Function to extract parameters from model name.
+        It handles names with 'b/B' for billions and 'm/M' for millions. 
+        """
+        # pattern to match a number followed by 'b' (representing billions) or 'm' (representing millions)
+        pattern = re.compile(r'(\d+\.?\d*)([bBmM])')
+        
+        match = pattern.search(model_name)
+        
+        if match:
+            num, magnitude = match.groups()
+            num = float(num)
+            
+            # convert millions to billions
+            if magnitude.lower() == 'm':
+                num /= 1000
+            
+            return num
+        
+        # return NaN if no match
+        return np.nan
+
+    
     def process_data(self):
         dataframes = [self._cleanup_dataframe(self._read_and_transform_data(filename), filename.split('/')[2])
                       for filename in self._find_files(self.directory, self.pattern)]
@@ -55,7 +82,18 @@ class ResultDataProcessor:
         data = data[cols]
 
         # Drop specific columns
-        return data.drop(columns=['all', 'truthfulqa:mc|0'])
+        data.drop(columns=['all', 'truthfulqa:mc|0'])
+
+
+        # Add parameter count column using extract_parameters function
+        data['Parameters'] = data.index.to_series().apply(self._extract_parameters)
+
+        # move the parameters column to the front of the dataframe
+        cols = data.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        data = data[cols]
+
+        return data
 
     def get_data(self, selected_models):
         return self.data[self.data.index.isin(selected_models)]

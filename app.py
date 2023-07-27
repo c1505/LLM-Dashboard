@@ -49,6 +49,9 @@ def create_plot(df, arc_column, moral_column, models=None):
     if models is not None:
         df = df[df.index.isin(models)]
 
+    # remove rows with NaN values
+    df = df.dropna(subset=[arc_column, moral_column])
+
     plot_data = pd.DataFrame({
         'Model': df.index,
         arc_column: df[arc_column],

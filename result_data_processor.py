@@ -11,6 +11,7 @@ class ResultDataProcessor:
         self.directory = directory
         self.pattern = pattern
         self.data = self.process_data()
+        self.ranked_data = self.rank_data()
 
     @staticmethod
     def _find_files(directory, pattern):
@@ -94,6 +95,15 @@ class ResultDataProcessor:
         data = data[cols]
 
         return data
+    
+    def rank_data(self):
+        # add rank for each column to the dataframe
+        # copy the data dataframe to avoid modifying the original dataframe
+        rank_data = self.data.copy()
+        for col in list(rank_data.columns):
+            rank_data[col + "_rank"] = rank_data[col].rank(ascending=False, method='min')
+
+        return rank_data
 
     def get_data(self, selected_models):
         return self.data[self.data.index.isin(selected_models)]

@@ -66,8 +66,41 @@ def create_plot(df, arc_column, moral_column, models=None):
                       xaxis = dict(),
                       yaxis = dict())
     
+    # Add a dashed line at 0.25 for the moral columns
+    x_min = df[arc_column].min()
+    x_max = df[arc_column].max()
+
+    y_min = df[moral_column].min()
+    y_max = df[moral_column].max()
+
+    if arc_column.startswith('MMLU'): 
+        fig.add_shape(
+        type='line',
+        x0=0.25, x1=0.25,
+        y0=y_min, y1=y_max,
+        line=dict(
+            color='red',
+            width=2,
+            dash='dash'
+        )
+        )
+
+    if moral_column.startswith('MMLU'):
+        fig.add_shape(
+        type='line',
+        x0=x_min, x1=x_max,
+        y0=0.25, y1=0.25,
+        line=dict(
+            color='red',
+            width=2,
+            dash='dash'
+        )
+        )
+
+    
     return fig
 
+# Custom scatter plots
 st.header('Custom scatter plots')
 selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
 selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=1)
@@ -77,6 +110,8 @@ if selected_x_column != selected_y_column:    # Avoid creating a plot with the s
     st.plotly_chart(fig)
 else:
     st.write("Please select different columns for the x and y axes.")
+
+# end of custom scatter plots
 
 st.header('Overall evaluation comparisons')
 

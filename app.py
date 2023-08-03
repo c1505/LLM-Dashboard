@@ -36,6 +36,11 @@ filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
 st.dataframe(filtered_data[selected_columns])
 
 # CSV download
+# name the index to include in the csv download
+
+
+filtered_data.index.name = "Model Name"
+
 csv = filtered_data.to_csv(index=True)
 st.download_button(
     label="Download data as CSV",

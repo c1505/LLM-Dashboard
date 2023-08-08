@@ -156,7 +156,8 @@ def create_plot(df, arc_column, moral_column, models=None):
 
 # Custom scatter plots
 st.header('Custom scatter plots')
-st.write("The dashed red line represents the random chance performance of 0.25")
+st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
+st.markdown("***The dashed red line indicates random chance accuracy of 0.25 as the MMLU evaluation is multiple choice with 4 response options.***")
 selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
 selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=3)
 
@@ -168,27 +169,25 @@ else:
 
 # end of custom scatter plots
 st.markdown("## Notable findings and plots")
-st.markdown("### Moral Scenarios Performance")
 
+st.markdown('### Abstract Algebra Performance')
+st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
+plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
 
-fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
 st.plotly_chart(fig)
 
+st.markdown("### Moral Scenarios Performance")
+st.write("While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  There are no models with less than 13 billion parameters with performance much better than random chance.")
+
+st.write("Impact of Parameter Count on Accuracy for Moral Scenarios")
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
 fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
 
-st.header('Abstract Algebra Performance')
-st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
-
-
-
-# Usage example:
-plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
-
-fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
+fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
 st.markdown("***Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations.***")

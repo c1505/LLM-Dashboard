@@ -187,13 +187,15 @@ st.plotly_chart(fig)
 
 # Moral scenarios plots
 st.markdown("### Moral Scenarios Performance")
-st.write("While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  There are no models with less than 13 billion parameters with performance much better than random chance.")
+st.write("""
+         While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  
+         There are no models with less than 13 billion parameters with performance much better than random chance. Further investigation into other capabilities that emerge at 13 billion parameters could help
+         identify capabilities that are important for moral reasoning.
+            """)
 
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
 st.plotly_chart(fig)
-
-fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hover_data=filtered_data.columns)
-st.plotly_chart(fig)
+st.write()
 
 fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)

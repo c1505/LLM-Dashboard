@@ -98,36 +98,40 @@ st.download_button(
     mime="text/csv",
 )
 
-
-def create_plot(df, arc_column, moral_column, models=None):
+def create_plot(df, x_values, y_values, models=None, title=None):
     if models is not None:
         df = df[df.index.isin(models)]
 
     # remove rows with NaN values
-    df = df.dropna(subset=[arc_column, moral_column])
+    df = df.dropna(subset=[x_values, y_values])
 
     plot_data = pd.DataFrame({
         'Model': df.index,
-        arc_column: df[arc_column],
-        moral_column: df[moral_column],
+        x_values: df[x_values],
+        y_values: df[y_values],
     })
 
     plot_data['color'] = 'purple'
-    fig = px.scatter(plot_data, x=arc_column, y=moral_column, color='color', hover_data=['Model'], trendline="ols")
-    fig.update_layout(showlegend=False, 
-                      xaxis_title=arc_column,
-                      yaxis_title=moral_column,
-                      xaxis = dict(),
-                      yaxis = dict())
+    fig = px.scatter(plot_data, x=x_values, y=y_values, color='color', hover_data=['Model'], trendline="ols")
+    layout_args = dict(
+        showlegend=False, 
+        xaxis_title=x_values,
+        yaxis_title=y_values,
+        xaxis=dict(),
+        yaxis=dict()
+    )
+    if title is not None: # Only set the title if provided
+        layout_args['title'] = title
+    fig.update_layout(**layout_args)
     
-    # Add a dashed line at 0.25 for the moral columns
-    x_min = df[arc_column].min()
-    x_max = df[arc_column].max()
+    # Add a dashed line at 0.25 for the y_values
+    x_min = df[x_values].min()
+    x_max = df[x_values].max()
 
-    y_min = df[moral_column].min()
-    y_max = df[moral_column].max()
+    y_min = df[y_values].min()
+    y_max = df[y_values].max()
 
-    if arc_column.startswith('MMLU'): 
+    if x_values.startswith('MMLU'): 
         fig.add_shape(
         type='line',
         x0=0.25, x1=0.25,
@@ -139,7 +143,7 @@ def create_plot(df, arc_column, moral_column, models=None):
         )
         )
 
-    if moral_column.startswith('MMLU'):
+    if y_values.startswith('MMLU'):
         fig.add_shape(
         type='line',
         x0=x_min, x1=x_max,
@@ -151,8 +155,8 @@ def create_plot(df, arc_column, moral_column, models=None):
         )
         )
 
-    
     return fig
+
 
 # Custom scatter plots
 st.header('Custom scatter plots')
@@ -177,11 +181,11 @@ plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
 st.plotly_chart(fig)
 
+# Moral scenarios plots
 st.markdown("### Moral Scenarios Performance")
 st.write("While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  There are no models with less than 13 billion parameters with performance much better than random chance.")
 
-st.write("Impact of Parameter Count on Accuracy for Moral Scenarios")
-fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios')
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
 st.plotly_chart(fig)
 
 fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hover_data=filtered_data.columns)

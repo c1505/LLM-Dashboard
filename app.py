@@ -2,6 +2,49 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from result_data_processor import ResultDataProcessor
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def plot_top_n(df, target_column, n=10):
+    top_n = df.nlargest(n, target_column)
+
+    # Initialize the bar plot
+    fig, ax1 = plt.subplots(figsize=(10, 5))
+
+    # Set width for each bar and their positions
+    width = 0.28
+    ind = np.arange(len(top_n))
+
+    # Plot target_column and MMLU_average on the primary y-axis with adjusted positions
+    ax1.bar(ind - width, top_n[target_column], width=width, color='blue', label=target_column)
+    ax1.bar(ind, top_n['MMLU_average'], width=width, color='orange', label='MMLU_average')
+
+    # Set the primary y-axis labels and title
+    ax1.set_title(f'Top {n} performing models on {target_column}')
+    ax1.set_xlabel('Model')
+    ax1.set_ylabel('Score')
+
+    # Create a secondary y-axis for Parameters
+    ax2 = ax1.twinx()
+
+    # Plot Parameters as bars on the secondary y-axis with adjusted position
+    ax2.bar(ind + width, top_n['Parameters'], width=width, color='red', label='Parameters')
+
+    # Set the secondary y-axis labels
+    ax2.set_ylabel('Parameters', color='red')
+    ax2.tick_params(axis='y', labelcolor='red')
+
+    # Set the x-ticks and their labels
+    ax1.set_xticks(ind)
+    ax1.set_xticklabels(top_n.index, rotation=45, ha="right")
+
+    # Adjust the legend
+    fig.tight_layout()
+    fig.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    # Show the plot
+    st.pyplot(fig)
 
 data_provider = ResultDataProcessor()
 
@@ -113,6 +156,7 @@ def create_plot(df, arc_column, moral_column, models=None):
 
 # Custom scatter plots
 st.header('Custom scatter plots')
+st.write("The dashed red line represents the random chance performance of 0.25")
 selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
 selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=3)
 
@@ -123,9 +167,9 @@ else:
     st.write("Please select different columns for the x and y axes.")
 
 # end of custom scatter plots
+st.markdown("## Notable findings and plots")
+st.markdown("### Moral Scenarios Performance")
 
-st.header('Moral Scenarios Performance')
-st.write("The dashed red line represents the random chance performance of 0.25")
 
 fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
@@ -137,12 +181,15 @@ fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hove
 st.plotly_chart(fig)
 
 st.header('Abstract Algebra Performance')
+st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
+
+
+
+# Usage example:
+plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
+
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
 st.plotly_chart(fig)
-
-fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_abstract_algebra')
-st.plotly_chart(fig)
-
 
 st.markdown("***Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations.***")
 

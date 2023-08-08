@@ -1,8 +1,13 @@
-# replicating the hugging face streamlit and pandas versions
+# replicating the current hugging face streamlit and pandas versions
 streamlit==1.21.0
 pandas==1.5.3
 
 # Other
 plotly==5.14.1
 statsmodels
+numpy
 matplotlib
+
+# exploratory data analysis
+seaborn
+nbformat

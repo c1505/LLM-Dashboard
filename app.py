@@ -5,7 +5,15 @@ from result_data_processor import ResultDataProcessor
 
 data_provider = ResultDataProcessor()
 
-st.title('Model Evaluation Results including MMLU by task')
+# st.title('Model Evaluation Results including MMLU by task')
+st.title('MMLU-by-Task Evaluation Results for 500+ Open Source Models')
+st.markdown("""***Last updated August 7th***""")
+st.markdown("""
+            Hugging Face has run evaluations on over 500 open source models and provides results on a
+            [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 
+            The leaderboard currently displays the overall result for MMLU. This page shows individual accuracy scores for all 57 tasks of the MMLU evaluation.
+            [Preliminary analysis of MMLU-by-Task data](https://coreymorrisdata.medium.com/preliminary-analysis-of-mmlu-evaluation-data-insights-from-500-open-source-models-e67885aa364b)
+            """)
 
 filters = st.checkbox('Select Models and Evaluations')
 
@@ -36,8 +44,6 @@ filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
 st.dataframe(filtered_data[selected_columns])
 
 # CSV download
-# name the index to include in the csv download
-
 
 filtered_data.index.name = "Model Name"
 
@@ -108,7 +114,7 @@ def create_plot(df, arc_column, moral_column, models=None):
 # Custom scatter plots
 st.header('Custom scatter plots')
 selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
-selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=1)
+selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=3)
 
 if selected_x_column != selected_y_column:    # Avoid creating a plot with the same column on both axes
     fig = create_plot(filtered_data, selected_x_column, selected_y_column)
@@ -118,42 +124,27 @@ else:
 
 # end of custom scatter plots
 
-st.header('Overall evaluation comparisons')
-
-fig = create_plot(filtered_data, 'arc:challenge|25', 'hellaswag|10')
-st.plotly_chart(fig)
-
-fig = create_plot(filtered_data, 'arc:challenge|25', 'MMLU_average')
-st.plotly_chart(fig)
-
-fig = create_plot(filtered_data, 'hellaswag|10', 'MMLU_average')
-st.plotly_chart(fig)
-
-st.header('Top 50 models on MMLU_average')
-top_50 = filtered_data.nlargest(50, 'MMLU_average')
-fig = create_plot(top_50, 'arc:challenge|25', 'MMLU_average')
-st.plotly_chart(fig)
-
-st.header('Moral Reasoning')
-
-fig = create_plot(filtered_data, 'arc:challenge|25', 'MMLU_moral_scenarios')
-st.plotly_chart(fig)
-
-fig = create_plot(filtered_data, 'MMLU_moral_disputes', 'MMLU_moral_scenarios')
-st.plotly_chart(fig)
+st.header('Moral Scenarios Performance')
+st.write("The dashed red line represents the random chance performance of 0.25")
 
 fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
+st.plotly_chart(fig)
+
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
 fig = px.histogram(filtered_data, x="MMLU_moral_scenarios", marginal="rug", hover_data=filtered_data.columns)
 st.plotly_chart(fig)
 
-fig = px.histogram(filtered_data, x="MMLU_moral_disputes", marginal="rug", hover_data=filtered_data.columns)
+st.header('Abstract Algebra Performance')
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
+st.plotly_chart(fig)
+
+fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_abstract_algebra')
 st.plotly_chart(fig)
 
 
-st.markdown("**Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations**")
-
+st.markdown("***Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations.***")
 
 st.markdown("""
 # References

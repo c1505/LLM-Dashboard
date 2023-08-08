@@ -113,15 +113,19 @@ def create_plot(df, x_values, y_values, models=None, title=None):
 
     plot_data['color'] = 'purple'
     fig = px.scatter(plot_data, x=x_values, y=y_values, color='color', hover_data=['Model'], trendline="ols")
+    
+    # If title is not provided, use x_values vs. y_values as the default title
+    if title is None:
+        title = x_values + " vs. " + y_values
+    
     layout_args = dict(
         showlegend=False, 
         xaxis_title=x_values,
         yaxis_title=y_values,
         xaxis=dict(),
-        yaxis=dict()
+        yaxis=dict(),
+        title=title
     )
-    if title is not None: # Only set the title if provided
-        layout_args['title'] = title
     fig.update_layout(**layout_args)
     
     # Add a dashed line at 0.25 for the y_values

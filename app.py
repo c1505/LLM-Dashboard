@@ -50,7 +50,7 @@ data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
 st.title('MMLU-by-Task Evaluation Results for 700+ Open Source Models')
-st.markdown("""***Last updated August 7th***""")
+st.markdown("""***Last updated August 10th***""")
 st.markdown("""
             Hugging Face has run evaluations on over 500 open source models and provides results on a
             [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 
@@ -58,7 +58,7 @@ st.markdown("""
             [Preliminary analysis of MMLU-by-Task data](https://coreymorrisdata.medium.com/preliminary-analysis-of-mmlu-evaluation-data-insights-from-500-open-source-models-e67885aa364b)
             """)
 
-filters = st.checkbox('Select Models and Evaluations')
+filters = st.checkbox('Select Models and/or Evaluations')
 
 # Initialize selected columns with "Parameters" and "MMLU_average" if filters are checked
 selected_columns = ['Parameters', 'MMLU_average'] if filters else data_provider.data.columns.tolist()

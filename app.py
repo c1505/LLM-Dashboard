@@ -115,6 +115,7 @@ column_search_query = st.text_input("Filter by Column/Task Name:", "")
 matching_columns = [col for col in filtered_data.columns if column_search_query.lower() in col.lower()]
 
 # Display the DataFrame with only the matching columns
+st.markdown("## Sortable Results")
 st.dataframe(filtered_data[matching_columns])
 
 

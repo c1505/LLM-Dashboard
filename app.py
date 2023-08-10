@@ -49,7 +49,7 @@ def plot_top_n(df, target_column, n=10):
 data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
-st.title('MMLU-by-Task Evaluation Results for 500+ Open Source Models')
+st.title('MMLU-by-Task Evaluation Results for 700+ Open Source Models')
 st.markdown("""***Last updated August 7th***""")
 st.markdown("""
             Hugging Face has run evaluations on over 500 open source models and provides results on a

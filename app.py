@@ -164,8 +164,15 @@ def create_plot(df, x_values, y_values, models=None, title=None):
 
 # Custom scatter plots
 st.header('Custom scatter plots')
-st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
+st.write("""
+         The scatter plot is useful to identify models that outperform or underperform on a particular task in relation to their size or overall performance.
+         Identifying these models is a first step to better understand what training strategies result in better performance on a particular task.
+         """)
 st.markdown("***The dashed red line indicates random chance accuracy of 0.25 as the MMLU evaluation is multiple choice with 4 response options.***")
+# add a line separating the writing
+st.markdown("***")
+st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
+
 selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
 selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=3)
 
@@ -196,6 +203,8 @@ st.write("""
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
 st.plotly_chart(fig)
 st.write()
+
+
 
 fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)

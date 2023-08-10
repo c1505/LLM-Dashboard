@@ -60,27 +60,31 @@ st.markdown("""
 
 filters = st.checkbox('Select Models and Evaluations')
 
-# Create defaults for selected columns and models
-selected_columns = data_provider.data.columns.tolist()
-selected_models = data_provider.data.index.tolist()
+# Initialize selected columns with "Parameters" and "MMLU_average" if filters are checked
+selected_columns = ['Parameters', 'MMLU_average'] if filters else data_provider.data.columns.tolist()
+
+# Initialize selected models as empty if filters are checked
+selected_models = [] if filters else data_provider.data.index.tolist()
 
 if filters:
-    # Create checkboxes for each column
+    # Create multi-select for columns with default selection
     selected_columns = st.multiselect(
         'Select Columns',
         data_provider.data.columns.tolist(),
         default=selected_columns
     )
 
+    # Create multi-select for models without default selection
     selected_models = st.multiselect(
         'Select Models',
-        data_provider.data.index.tolist(),
-        default=selected_models
+        data_provider.data.index.tolist()
     )
 
 # Get the filtered data
-st.header('Sortable table')
 filtered_data = data_provider.get_data(selected_models)
+
+
+
 
 # sort the table by the MMLU_average column
 filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)

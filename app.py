@@ -84,7 +84,28 @@ filtered_data = data_provider.get_data(selected_models)
 
 # sort the table by the MMLU_average column
 filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
-st.dataframe(filtered_data[selected_columns])
+
+# Search box
+search_query = st.text_input("Filter by Model Name:", "")
+
+# Filter the DataFrame based on the search query, including the index
+if search_query:
+    filtered_data = filtered_data[
+        filtered_data.apply(
+            lambda row: row.astype(str).str.contains(search_query, case=False).any() or search_query.lower() in row.name.lower(),
+            axis=1
+        )
+    ]
+
+# Search box for columns
+column_search_query = st.text_input("Filter by Column/Task Name:", "")
+
+# Get the columns that contain the search query
+matching_columns = [col for col in filtered_data.columns if column_search_query.lower() in col.lower()]
+
+# Display the DataFrame with only the matching columns
+st.dataframe(filtered_data[matching_columns])
+
 
 # CSV download
 

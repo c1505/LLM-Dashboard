@@ -5,6 +5,7 @@ from result_data_processor import ResultDataProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 
+st.set_page_config(layout="wide")
 
 def plot_top_n(df, target_column, n=10):
     top_n = df.nlargest(n, target_column)

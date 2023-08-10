@@ -83,23 +83,29 @@ if filters:
 # Get the filtered data
 filtered_data = data_provider.get_data(selected_models)
 
-
-
-
 # sort the table by the MMLU_average column
 filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)
+
+# Select box for filtering by Parameters
+parameter_threshold = st.selectbox(
+    'Filter by Parameters (Less Than or Equal To):',
+    options=[3, 7, 13, 35, 'No threshold'],
+    index=4,  # Set the default selected option to 'No threshold'
+    format_func=lambda x: f"{x}" if isinstance(x, int) else x
+)
+
+# Filter the DataFrame based on the selected parameter threshold if not 'No threshold'
+if isinstance(parameter_threshold, int):
+    filtered_data = filtered_data[filtered_data['Parameters'] <= parameter_threshold]
+
 
 # Search box
 search_query = st.text_input("Filter by Model Name:", "")
 
-# Filter the DataFrame based on the search query, including the index
+# Filter the DataFrame based on the search query in the index (model name)
 if search_query:
-    filtered_data = filtered_data[
-        filtered_data.apply(
-            lambda row: row.astype(str).str.contains(search_query, case=False).any() or search_query.lower() in row.name.lower(),
-            axis=1
-        )
-    ]
+    filtered_data = filtered_data[filtered_data.index.str.contains(search_query, case=False)]
+
 
 # Search box for columns
 column_search_query = st.text_input("Filter by Column/Task Name:", "")

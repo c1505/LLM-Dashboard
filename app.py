@@ -4,6 +4,7 @@ import plotly.express as px
 from result_data_processor import ResultDataProcessor
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
 
 st.set_page_config(layout="wide")
 
@@ -46,6 +47,46 @@ def plot_top_n(df, target_column, n=10):
 
     # Show the plot
     st.pyplot(fig)
+
+# Function to create an unfilled radar chart
+def create_radar_chart_unfilled(df, model_names, metrics):
+    fig = go.Figure()
+    min_value = df.loc[model_names, metrics].min().min()
+    max_value = df.loc[model_names, metrics].max().max()
+    for model_name in model_names:
+        values_model = df.loc[model_name, metrics]
+        fig.add_trace(go.Scatterpolar(
+            r=values_model,
+            theta=metrics,
+            name=model_name
+        ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[min_value, max_value]
+            )),
+        showlegend=True
+    )
+    return fig
+
+
+# Function to create a line chart
+def create_line_chart(df, model_names, metrics):
+    line_data = []
+    for model_name in model_names:
+        values_model = df.loc[model_name, metrics]
+        for metric, value in zip(metrics, values_model):
+            line_data.append({'Model': model_name, 'Metric': metric, 'Value': value})
+
+    line_df = pd.DataFrame(line_data)
+
+    fig = px.line(line_df, x='Metric', y='Value', color='Model', title='Comparison of Models', line_dash_sequence=['solid'])
+    fig.update_layout(showlegend=True)
+    return fig
+
+
 
 data_provider = ResultDataProcessor()
 
@@ -131,6 +172,7 @@ st.download_button(
     mime="text/csv",
 )
 
+
 def create_plot(df, x_values, y_values, models=None, title=None):
     if models is not None:
         df = df[df.index.isin(models)]
@@ -214,6 +256,21 @@ if selected_x_column != selected_y_column:    # Avoid creating a plot with the s
     st.plotly_chart(fig)
 else:
     st.write("Please select different columns for the x and y axes.")
+
+
+# Section to select a model and display radar and line charts
+st.header("Compare Models")
+selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist())
+metrics_to_compare = ['MMLU_abstract_algebra', 'MMLU_astronomy', 'MMLU_business_ethics', 'MMLU_average', 'MMLU_moral_scenarios']
+closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
+
+fig_radar = create_radar_chart_unfilled(filtered_data, closest_models, metrics_to_compare)
+fig_line = create_line_chart(filtered_data, closest_models, metrics_to_compare)
+
+st.plotly_chart(fig_radar)
+st.plotly_chart(fig_line)
+
+
 
 # end of custom scatter plots
 st.markdown("## Notable findings and plots")

@@ -270,42 +270,7 @@ if selected_x_column != selected_y_column:    # Avoid creating a plot with the s
 else:
     st.write("Please select different columns for the x and y axes.")
 
-# Section to select a model and display radar and line charts
-st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
-st.write("""
-         This comparison highlights the nuances in model performance across different tasks. 
-         While the overall MMLU average score provides a general understanding of a model's capabilities, 
-         examining the closest models reveals variations in performance on individual tasks. 
-         Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
-         """)
 
-default_model_name = "GPT-JT-6B-v0"
-
-default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
-selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
-
-# Get the closest 5 models with unique indices
-closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
-closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
-
-
-print(closest_models)
-
-# Find the top 10 tasks with the largest differences and convert to a DataFrame
-top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
-
-# Display the DataFrame for the closest models and the top differences tasks
-st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
-
-# Display the table in the Streamlit app
-st.markdown("## Top Differences")
-st.dataframe(top_differences_table)
-
-# Create a radar chart for the tasks with the largest differences
-fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
-
-# Display the radar chart
-st.plotly_chart(fig_radar_top_differences)
 
 
 # end of custom scatter plots
@@ -334,6 +299,42 @@ st.write()
 
 fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
+
+
+# Section to select a model and display radar and line charts
+st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
+st.write("""
+         This comparison highlights the nuances in model performance across different tasks. 
+         While the overall MMLU average score provides a general understanding of a model's capabilities, 
+         examining the closest models reveals variations in performance on individual tasks. 
+         Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
+         """)
+
+default_model_name = "GPT-JT-6B-v0"
+
+default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
+selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
+
+# Get the closest 5 models with unique indices
+closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
+closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
+
+
+# Find the top 10 tasks with the largest differences and convert to a DataFrame
+top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
+
+# Display the DataFrame for the closest models and the top differences tasks
+st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
+
+# # Display the table in the Streamlit app
+# st.markdown("## Top Differences")
+# st.dataframe(top_differences_table)
+
+# Create a radar chart for the tasks with the largest differences
+fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
+
+# Display the radar chart
+st.plotly_chart(fig_radar_top_differences)
 
 st.markdown("***Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations.***")
 

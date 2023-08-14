@@ -271,8 +271,13 @@ else:
     st.write("Please select different columns for the x and y axes.")
 
 # Section to select a model and display radar and line charts
-st.header("Compare selected models to models the closest 5 models on MMLU average")
-st.write("This is to demonstrate that while the average score is useful, there is a lot of variation in performance on individual tasks.")
+st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
+st.write("""
+         This comparison highlights the nuances in model performance across different tasks. 
+         While the overall MMLU average score provides a general understanding of a model's capabilities, 
+         examining the closest models reveals variations in performance on individual tasks. 
+         Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
+         """)
 selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist())
 
 # Get the closest 5 models with unique indices

@@ -275,8 +275,12 @@ st.header("Compare selected models to models the closest 5 models on MMLU averag
 st.write("This is to demonstrate that while the average score is useful, there is a lot of variation in performance on individual tasks.")
 selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist())
 
-# Get the closest 5 models to the selected model based on MMLU average
-closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
+# Get the closest 5 models with unique indices
+closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
+closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
+
+
+print(closest_models)
 
 # Find the top 10 tasks with the largest differences and convert to a DataFrame
 top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)

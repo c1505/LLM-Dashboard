@@ -259,7 +259,8 @@ else:
 
 
 # Section to select a model and display radar and line charts
-st.header("Compare Models")
+st.header("Compare selected models to models the closest 5 models on MMLU average")
+st.write("This is to demonstrate that while the average score is useful, there is a lot of variation in performance on individual tasks.")
 selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist())
 metrics_to_compare = ['MMLU_abstract_algebra', 'MMLU_astronomy', 'MMLU_business_ethics', 'MMLU_average', 'MMLU_moral_scenarios']
 closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
@@ -269,6 +270,11 @@ fig_line = create_line_chart(filtered_data, closest_models, metrics_to_compare)
 
 st.plotly_chart(fig_radar)
 st.plotly_chart(fig_line)
+
+# show MMLU_average at the beginning of the dataframe
+
+st.dataframe(filtered_data.loc[closest_models, metrics_to_compare])
+
 
 
 

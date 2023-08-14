@@ -278,7 +278,11 @@ st.write("""
          examining the closest models reveals variations in performance on individual tasks. 
          Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
          """)
-selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist())
+
+default_model_name = "GPT-JT-6B-v0"
+
+default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
+selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
 
 # Get the closest 5 models with unique indices
 closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()

@@ -86,6 +86,19 @@ def create_line_chart(df, model_names, metrics):
     fig.update_layout(showlegend=True)
     return fig
 
+def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters']):
+    # Calculate the absolute differences for each task between the target model and the closest models
+    differences = df.loc[closest_models].drop(columns=exclude_columns).sub(df.loc[target_model]).abs()
+    # Unstack the differences and sort by the largest absolute difference
+    top_differences = differences.unstack().nlargest(num_differences)
+    # Convert the top differences to a DataFrame for display
+    top_differences_table = pd.DataFrame({
+        'Task': [idx[0] for idx in top_differences.index],
+        'Difference': top_differences.values
+    })
+    # Ensure that only unique tasks are returned
+    unique_top_differences_tasks = list(set(top_differences_table['Task'].tolist()))
+    return top_differences_table, unique_top_differences_tasks
 
 
 data_provider = ResultDataProcessor()
@@ -257,31 +270,19 @@ if selected_x_column != selected_y_column:    # Avoid creating a plot with the s
 else:
     st.write("Please select different columns for the x and y axes.")
 
-
 # Section to select a model and display radar and line charts
 st.header("Compare selected models to models the closest 5 models on MMLU average")
 st.write("This is to demonstrate that while the average score is useful, there is a lot of variation in performance on individual tasks.")
 selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist())
-metrics_to_compare = ['MMLU_abstract_algebra', 'MMLU_astronomy', 'MMLU_business_ethics', 'MMLU_average', 'MMLU_moral_scenarios']
+
+# Get the closest 5 models to the selected model based on MMLU average
 closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
-
-st.dataframe(filtered_data.loc[closest_models, metrics_to_compare])
-
-# Function to find the top differences and return them as a DataFrame
-def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters']):
-    # Calculate the absolute differences for each task between the target model and the closest models
-    differences = df.loc[closest_models].drop(columns=exclude_columns).sub(df.loc[target_model]).abs()
-    # Unstack the differences and sort by the largest absolute difference
-    top_differences = differences.unstack().nlargest(num_differences)
-    # Convert the top differences to a DataFrame for display
-    top_differences_table = pd.DataFrame({
-        'Task': [idx[0] for idx in top_differences.index],
-        'Difference': top_differences.values
-    })
-    return top_differences_table, top_differences_table['Task'].tolist()
 
 # Find the top 10 tasks with the largest differences and convert to a DataFrame
 top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
+
+# Display the DataFrame for the closest models and the top differences tasks
+st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
 
 # Display the table in the Streamlit app
 st.markdown("## Top Differences")

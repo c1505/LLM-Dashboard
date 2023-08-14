@@ -265,13 +265,6 @@ selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist
 metrics_to_compare = ['MMLU_abstract_algebra', 'MMLU_astronomy', 'MMLU_business_ethics', 'MMLU_average', 'MMLU_moral_scenarios']
 closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
 
-fig_radar = create_radar_chart_unfilled(filtered_data, closest_models, metrics_to_compare)
-fig_line = create_line_chart(filtered_data, closest_models, metrics_to_compare)
-
-st.plotly_chart(fig_radar)
-st.plotly_chart(fig_line)
-
-
 st.dataframe(filtered_data.loc[closest_models, metrics_to_compare])
 
 # Function to find the top differences and return them as a DataFrame
@@ -286,10 +279,6 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
         'Difference': top_differences.values
     })
     return top_differences_table, top_differences_table['Task'].tolist()
-
-# Your existing code for selecting the target model and finding the closest models
-selected_model_name = "firefly-ziya-13b"
-# closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
 
 # Find the top 10 tasks with the largest differences and convert to a DataFrame
 top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)

@@ -271,11 +271,38 @@ fig_line = create_line_chart(filtered_data, closest_models, metrics_to_compare)
 st.plotly_chart(fig_radar)
 st.plotly_chart(fig_line)
 
-# show MMLU_average at the beginning of the dataframe
 
 st.dataframe(filtered_data.loc[closest_models, metrics_to_compare])
 
+# Function to find the top differences and return them as a DataFrame
+def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters']):
+    # Calculate the absolute differences for each task between the target model and the closest models
+    differences = df.loc[closest_models].drop(columns=exclude_columns).sub(df.loc[target_model]).abs()
+    # Unstack the differences and sort by the largest absolute difference
+    top_differences = differences.unstack().nlargest(num_differences)
+    # Convert the top differences to a DataFrame for display
+    top_differences_table = pd.DataFrame({
+        'Task': [idx[0] for idx in top_differences.index],
+        'Difference': top_differences.values
+    })
+    return top_differences_table, top_differences_table['Task'].tolist()
 
+# Your existing code for selecting the target model and finding the closest models
+selected_model_name = "firefly-ziya-13b"
+# closest_models = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs().nsmallest(5).index.tolist()
+
+# Find the top 10 tasks with the largest differences and convert to a DataFrame
+top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
+
+# Display the table in the Streamlit app
+st.markdown("## Top Differences")
+st.dataframe(top_differences_table)
+
+# Create a radar chart for the tasks with the largest differences
+fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
+
+# Display the radar chart
+st.plotly_chart(fig_radar_top_differences)
 
 
 # end of custom scatter plots

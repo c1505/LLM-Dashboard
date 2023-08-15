@@ -276,32 +276,6 @@ else:
 
 
 # end of custom scatter plots
-st.markdown("## Notable findings and plots")
-
-st.markdown('### Abstract Algebra Performance')
-st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
-plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
-
-fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
-st.plotly_chart(fig)
-
-# Moral scenarios plots
-st.markdown("### Moral Scenarios Performance")
-st.write("""
-         While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  
-         There are no models with less than 13 billion parameters with performance much better than random chance. Further investigation into other capabilities that emerge at 13 billion parameters could help
-         identify capabilities that are important for moral reasoning.
-            """)
-
-fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
-st.plotly_chart(fig)
-st.write()
-
-
-
-fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
-st.plotly_chart(fig)
-
 
 # Section to select a model and display radar and line charts
 st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
@@ -337,6 +311,36 @@ fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_m
 
 # Display the radar chart
 st.plotly_chart(fig_radar_top_differences)
+
+
+st.markdown("## Notable findings and plots")
+
+st.markdown('### Abstract Algebra Performance')
+st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
+plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
+
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
+st.plotly_chart(fig)
+
+# Moral scenarios plots
+st.markdown("### Moral Scenarios Performance")
+st.write("""
+         While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  
+         There are no models with less than 13 billion parameters with performance much better than random chance. Further investigation into other capabilities that emerge at 13 billion parameters could help
+         identify capabilities that are important for moral reasoning.
+            """)
+
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
+st.plotly_chart(fig)
+st.write()
+
+
+
+fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
+st.plotly_chart(fig)
+
+
+
 
 st.markdown("***Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations.***")
 

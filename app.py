@@ -217,7 +217,9 @@ def create_plot(df, x_values, y_values, models=None, title=None):
         yaxis_title=y_values,
         xaxis=dict(),
         yaxis=dict(),
-        title=title
+        title=title,
+        height=500,
+        width=1000,
     )
     fig.update_layout(**layout_args)
     

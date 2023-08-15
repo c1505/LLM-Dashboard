@@ -67,9 +67,12 @@ def create_radar_chart_unfilled(df, model_names, metrics):
                 visible=True,
                 range=[min_value, max_value]
             )),
-        showlegend=True
+        showlegend=True,
+        width=800,  # Change the width as needed
+        height=600   # Change the height as needed
     )
     return fig
+
 
 
 # Function to create a line chart

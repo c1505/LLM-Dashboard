@@ -104,12 +104,14 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
 data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
-st.title('MMLU-by-Task Evaluation Results for 700+ Open Source Models')
-st.markdown("""***Last updated August 10th***""")
+st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 700+ Open Source Models Across 57 Diverse Evaluation Tasks')
+st.markdown("""***Last updated August 15th***""")
 st.markdown("""
-            Hugging Face has run evaluations on over 500 open source models and provides results on a
+            Hugging Face has run evaluations on over 700 open source models and provides results on a
             [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 
-            The leaderboard currently displays the overall result for MMLU. This page shows individual accuracy scores for all 57 tasks of the MMLU evaluation.
+            The Hugging Face leaderboard currently displays the overall result for Measuring Massive Multitask Language Understanding (MMLU), but not the results for individual tasks.
+            This app provides a way to explore the results for individual tasks and compare models across tasks.
+            There are 57 tasks in the MMLU evaluation that cover a wide variety of subjects including Science, Math, Humanities, Social Science, Applied Science, Logic, and Security.
             [Preliminary analysis of MMLU-by-Task data](https://coreymorrisdata.medium.com/preliminary-analysis-of-mmlu-evaluation-data-insights-from-500-open-source-models-e67885aa364b)
             """)
 
@@ -341,7 +343,7 @@ st.markdown("***Thank you to hugging face for running the evaluations and supply
 st.markdown("""
 # Citation
 
-1. Corey Morris (2023). *MMLU-by-Task Evaluation Results for 700+ Open Source Models*. [link](https://huggingface.co/spaces/CoreyMorris/MMLU-by-task-Leaderboard)
+1. Corey Morris (2023). *Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 700+ Open Source Models Across 57 Diverse Evaluation Tasks*. [link](https://huggingface.co/spaces/CoreyMorris/MMLU-by-task-Leaderboard)
             
 2. Edward Beeching, Clémentine Fourrier, Nathan Habib, Sheon Han, Nathan Lambert, Nazneen Rajani, Omar Sanseviero, Lewis Tunstall, Thomas Wolf. (2023). *Open LLM Leaderboard*. Hugging Face. [link](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard)
 

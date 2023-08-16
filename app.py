@@ -5,6 +5,20 @@ from result_data_processor import ResultDataProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
+from streamlit.components.v1 import html
+
+# Google Analytics code snippet
+google_analytics_code = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MT9QYR70MC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MT9QYR70MC');
+</script>
+"""
+html(google_analytics_code, height=0)
 
 st.set_page_config(layout="wide")
 

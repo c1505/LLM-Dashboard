@@ -7,6 +7,8 @@ import numpy as np
 import plotly.graph_objects as go
 from streamlit.components.v1 import html
 
+st.set_page_config(layout="wide")
+
 # Google Analytics code snippet
 google_analytics_code = """
 <!-- Google tag (gtag.js) -->
@@ -20,7 +22,7 @@ google_analytics_code = """
 """
 html(google_analytics_code, height=0)
 
-st.set_page_config(layout="wide")
+
 
 def plot_top_n(df, target_column, n=10):
     top_n = df.nlargest(n, target_column)

@@ -60,8 +60,14 @@ class ResultDataProcessor:
 
     
     def process_data(self):
-        dataframes = [self._cleanup_dataframe(self._read_and_transform_data(filename), filename.split('/')[2])
-                      for filename in self._find_files(self.directory, self.pattern)]
+        
+        dataframes = []
+        for filename in self._find_files(self.directory, self.pattern):
+            raw_data = self._read_and_transform_data(filename)
+            model_name = filename.split('/')[2]
+            cleaned_data = self._cleanup_dataframe(raw_data, model_name)
+            dataframes.append(cleaned_data)
+
 
         data = pd.concat(dataframes, axis=1).transpose()
         

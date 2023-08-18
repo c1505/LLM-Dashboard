@@ -18,12 +18,22 @@ class TestResultDataProcessor(unittest.TestCase):
         self.assertIn('Parameters', data.columns)
         self.assertIn('MMLU_average', data.columns)
         # check number of columns
-        self.assertEqual(len(data.columns), 63)
+        self.assertEqual(len(data.columns), 61)
 
     # check that the number of rows is correct
     def test_rows(self):
         data = self.processor.data
         self.assertEqual(len(data), 992)
+
+    # # check that mc1 column exists
+    # def test_mc1(self):
+    #     data = self.processor.data
+    #     self.assertIn('mc1', data.columns)
+
+    # test that a column that contains truthfulqa:mc does not exist
+    def test_truthfulqa_mc(self):
+        data = self.processor.data
+        self.assertNotIn('truthfulqa:mc', data.columns)
         
 if __name__ == '__main__':
     unittest.main()

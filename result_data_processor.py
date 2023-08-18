@@ -83,8 +83,7 @@ class ResultDataProcessor:
         data = data[cols]
 
         # Drop specific columns
-        data.drop(columns=['all', 'truthfulqa:mc|0'])
-
+        data = data.drop(columns=['all', 'truthfulqa:mc|0'])
 
         # Add parameter count column using extract_parameters function
         data['Parameters'] = data.index.to_series().apply(self._extract_parameters)

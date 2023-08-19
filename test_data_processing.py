@@ -18,17 +18,17 @@ class TestResultDataProcessor(unittest.TestCase):
         self.assertIn('Parameters', data.columns)
         self.assertIn('MMLU_average', data.columns)
         # check number of columns
-        self.assertEqual(len(data.columns), 61)
+        self.assertEqual(len(data.columns), 63)
 
     # check that the number of rows is correct
     def test_rows(self):
         data = self.processor.data
         self.assertEqual(len(data), 992)
 
-    # # check that mc1 column exists
-    # def test_mc1(self):
-    #     data = self.processor.data
-    #     self.assertIn('mc1', data.columns)
+    # check that mc1 column exists
+    def test_mc1(self):
+        data = self.processor.data
+        self.assertIn('harness|truthfulqa:mc1', data.columns)
 
     # test that a column that contains truthfulqa:mc does not exist
     def test_truthfulqa_mc(self):

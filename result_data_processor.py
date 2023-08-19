@@ -34,6 +34,22 @@ class ResultDataProcessor:
                           .str.replace('\|5', '', regex=True))
         return df[[model_name]]
     
+    def _extract_mc1(self, df, model_name):
+        df = df.rename(columns={'mc1': model_name})
+        # rename row harness|truthfulqa:mc|0 to truthfulqa:mc1
+        df.index = (df.index.str.replace('mc\|0', 'mc1', regex=True))
+        # just return the harness|truthfulqa:mc1 row
+        df = df.loc[['harness|truthfulqa:mc1']]
+        return df[[model_name]]
+    
+    def _extract_mc2(self, df, model_name):
+        # rename row harness|truthfulqa:mc|0 to truthfulqa:mc2
+        df = df.rename(columns={'mc2': model_name})
+        df.index = (df.index.str.replace('mc\|0', 'mc2', regex=True))
+        df = df.loc[['harness|truthfulqa:mc2']]
+        return df[[model_name]]
+
+    
     @staticmethod
     def _extract_parameters(model_name):
         """
@@ -66,6 +82,10 @@ class ResultDataProcessor:
             raw_data = self._read_and_transform_data(filename)
             model_name = filename.split('/')[2]
             cleaned_data = self._cleanup_dataframe(raw_data, model_name)
+            mc1 = self._extract_mc1(raw_data, model_name)
+            mc2 = self._extract_mc2(raw_data, model_name)
+            cleaned_data = pd.concat([cleaned_data, mc1])
+            cleaned_data = pd.concat([cleaned_data, mc2])
             dataframes.append(cleaned_data)
 
 

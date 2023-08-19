@@ -11,18 +11,21 @@ class TestAppFunctions(unittest.TestCase):
         self.processor = ResultDataProcessor()  
         self.data = self.processor.data  # Assuming this gives you the DataFrame you need
     
-    # def test_find_top_differences_table_error(self):
-    #     # Define the variables that replicate the error
-    #     closest_models = # define this based on your code
-    #     exclude_columns = # define this based on your code
-    #     selected_model_name = # define this based on your code
+    def test_find_top_differences_table_error(self):
+        # replicating the error before fixing it
+        filtered_data = self.data
+
+        # Get the closest 5 models with unique indices
+        closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
+        closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
+
+
+        exclude_columns=['Parameters']
+        # Run the problematic function without catching the TypeError
+        top_differences_table, top_differences_tasks = find_top_differences_table(
+            self.data, selected_model_name, closest_models, exclude_columns
+        )
         
-    #     # Run the problematic function without catching the TypeError
-    #     top_differences_table, top_differences_tasks = find_top_differences_table(
-    #         self.data, selected_model_name, closest_models, exclude_columns
-    #     )
-        
-        # If you wish to add any assertions related to the expected output, add them here
     def test_streamlit_app_runs():
         # Start the Streamlit app in a subprocess
         process = subprocess.Popen(["streamlit", "run", "app.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

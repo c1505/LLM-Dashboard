@@ -3,6 +3,7 @@ import time
 import requests
 import unittest
 from app import find_top_differences_table
+from result_data_processor import ResultDataProcessor
 
 class TestAppFunctions(unittest.TestCase):
 
@@ -16,17 +17,20 @@ class TestAppFunctions(unittest.TestCase):
         filtered_data = self.data
 
         # Get the closest 5 models with unique indices
+        selected_model_name = 'Platypus2-70B-instruct'
+        exclude_columns=['Parameters','organization']
         closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
         closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
 
 
-        exclude_columns=['Parameters']
+
+
         # Run the problematic function without catching the TypeError
         top_differences_table, top_differences_tasks = find_top_differences_table(
             self.data, selected_model_name, closest_models, exclude_columns
         )
         
-    def test_streamlit_app_runs():
+    def test_streamlit_app_runs(self):
         # Start the Streamlit app in a subprocess
         process = subprocess.Popen(["streamlit", "run", "app.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

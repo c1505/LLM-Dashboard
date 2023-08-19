@@ -89,6 +89,7 @@ class ResultDataProcessor:
     def process_data(self):
         
         dataframes = []
+        organization_names = []
         for filename in self._find_files(self.directory, self.pattern):
             raw_data = self._read_and_transform_data(filename)
             split_path = filename.split('/')
@@ -99,13 +100,15 @@ class ResultDataProcessor:
             mc2 = self._extract_mc2(raw_data, model_name)
             cleaned_data = pd.concat([cleaned_data, mc1])
             cleaned_data = pd.concat([cleaned_data, mc2])
-            # add organization name to the dataframe as a new row
-            cleaned_data.loc['organization'] = organization_name
+            organization_names.append(organization_name)
             dataframes.append(cleaned_data)
 
 
         data = pd.concat(dataframes, axis=1).transpose()
-        
+
+        # Add organization column
+        data['organization'] = organization_names
+
         # Add Model Name and rearrange columns
         data['Model Name'] = data.index
         cols = data.columns.tolist()
@@ -136,8 +139,6 @@ class ResultDataProcessor:
 
         # remove extreme outliers from column harness|truthfulqa:mc1
         data = self._remove_mc1_outliers(data)
-
-        data = data.drop(columns=['organization'])
 
         return data
     

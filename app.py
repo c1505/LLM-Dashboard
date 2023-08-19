@@ -105,7 +105,7 @@ def create_line_chart(df, model_names, metrics):
     fig.update_layout(showlegend=True)
     return fig
 
-def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters']):
+def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters', 'organization']):
     # Calculate the absolute differences for each task between the target model and the closest models
     new_df = df.drop(columns=exclude_columns)
     differences = new_df.loc[closest_models].sub(new_df.loc[target_model]).abs()

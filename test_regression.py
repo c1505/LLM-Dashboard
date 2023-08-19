@@ -15,6 +15,12 @@ class TestRegression(unittest.TestCase):
         reference_file = f'dataframe_history/output_{last_commit}.parquet'
         df_reference = pd.read_parquet(reference_file)
 
+        #TODO
+        # if there are no untracked changes, the dataframes should be the same
+        # instead check the last commit to the one previous to that one
+        # if there are untracked changes, the dataframes should be different
+        # either optionally take a parameter for this test or extract the comparison logic so that it can be used separately to 
+        # compare given any two commit hashes
 
         # Compare DataFrames, allowing for some tolerance in floating-point comparisons
         pd.testing.assert_frame_equal(df_current, df_reference, check_dtype=True, atol=1e-5)

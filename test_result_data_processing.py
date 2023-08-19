@@ -23,7 +23,7 @@ class TestResultDataProcessor(unittest.TestCase):
     # check that the number of rows is correct
     def test_rows(self):
         data = self.processor.data
-        self.assertEqual(len(data), 992)
+        self.assertEqual(len(data), 998)
 
     # check that mc1 column exists
     def test_mc1(self):
@@ -42,5 +42,11 @@ class TestResultDataProcessor(unittest.TestCase):
         self.assertLess(mc1.max(), 1.0)
         self.assertGreater(mc1.min(), 0.0)
         
+
+    # test that a column named organization exists
+    def test_organization(self):
+        data = self.processor.data
+        self.assertIn('organization', data.columns)
+
 if __name__ == '__main__':
     unittest.main()

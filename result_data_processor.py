@@ -91,12 +91,16 @@ class ResultDataProcessor:
         dataframes = []
         for filename in self._find_files(self.directory, self.pattern):
             raw_data = self._read_and_transform_data(filename)
-            model_name = filename.split('/')[2]
+            split_path = filename.split('/')
+            model_name = split_path[2]
+            organization_name = split_path[1]
             cleaned_data = self._cleanup_dataframe(raw_data, model_name)
             mc1 = self._extract_mc1(raw_data, model_name)
             mc2 = self._extract_mc2(raw_data, model_name)
             cleaned_data = pd.concat([cleaned_data, mc1])
             cleaned_data = pd.concat([cleaned_data, mc2])
+            # add organization name to the dataframe as a new row
+            cleaned_data.loc['organization'] = organization_name
             dataframes.append(cleaned_data)
 
 

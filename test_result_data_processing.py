@@ -18,7 +18,7 @@ class TestResultDataProcessor(unittest.TestCase):
         self.assertIn('Parameters', data.columns)
         self.assertIn('MMLU_average', data.columns)
         # check number of columns
-        self.assertEqual(len(data.columns), 63)
+        self.assertEqual(len(data.columns), 64)
 
     # check that the number of rows is correct
     def test_rows(self):

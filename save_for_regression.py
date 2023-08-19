@@ -11,7 +11,7 @@ import os
 
 import subprocess
 
-def has_uncommitted_changes(repo_path):
+def check_git_changes(repo_path):
     try:
         # Change to the repository directory
         original_path = os.getcwd()
@@ -23,24 +23,33 @@ def has_uncommitted_changes(repo_path):
         # Check the result
         if result.returncode != 0:
             print(f"Error checking git status: {result.stderr}")
-            return False
+            return False, False
 
-        # If the output is empty, there are no uncommitted changes
-        return bool(result.stdout.strip())
+        # Check for tracked and untracked changes
+        tracked_changes = any(line[:2].strip() != '??' for line in result.stdout.splitlines())
+        untracked_changes = any(line[:2] == '??' for line in result.stdout.splitlines())
+
+        return tracked_changes, untracked_changes
 
     finally:
         # Change back to the original directory
         os.chdir(original_path)
 
 if __name__ == '__main__':
-    if has_uncommitted_changes('.'):
-        print("There are uncommitted changes")
+    tracked_changes, untracked_changes = check_git_changes('.')
+    if tracked_changes:
+        print("There are tracked changes")
     else:
-        print("There are no uncommitted changes")
+        print("There are no tracked changes")
         df_current = ResultDataProcessor().data
         last_commit = os.popen('git rev-parse HEAD').read().strip()
         print(last_commit)
         # save the current output to a file
         df_current.to_parquet(f'output_{last_commit}.parquet', index=True)
         print("Saved output to file")
+    if untracked_changes:
+        print("There are untracked changes")
+    else:
+        print("There are no untracked changes")
+
         

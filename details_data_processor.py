@@ -4,14 +4,23 @@ import fnmatch
 import json
 import re
 import numpy as np
+import requests
 
 class DetailsDataProcessor:
+    # Download 
+    #url example
     
     def __init__(self, directory='results', pattern='results*.json'):
         self.directory = directory
         self.pattern = pattern
         # self.data = self.process_data()
         # self.ranked_data = self.rank_data()
+
+    # download a file from a single url and save it to a local directory
+    @staticmethod
+    def _download_file(url, filename):
+        r = requests.get(url, allow_redirects=True)
+        open(filename, 'wb').write(r.content)
 
     # @staticmethod
     # def _find_files(directory, pattern):

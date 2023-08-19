@@ -45,7 +45,7 @@ if __name__ == '__main__':
         last_commit = os.popen('git rev-parse HEAD').read().strip()
         print(last_commit)
         # save the current output to a file
-        df_current.to_parquet(f'output_{last_commit}.parquet', index=True)
+        df_current.to_parquet(f'dataframe_history/output_{last_commit}.parquet', index=True)
         print("Saved output to file")
     if untracked_changes:
         print("There are untracked changes")

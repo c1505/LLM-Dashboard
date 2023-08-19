@@ -12,7 +12,7 @@ class TestRegression(unittest.TestCase):
         # load the reference dataframe
         last_commit = os.popen('git rev-parse HEAD').read().strip()
         print(last_commit)
-        reference_file = f'output_{last_commit}.parquet'
+        reference_file = f'dataframe_history/output_{last_commit}.parquet'
         df_reference = pd.read_parquet(reference_file)
 
 

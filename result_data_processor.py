@@ -55,8 +55,6 @@ class ResultDataProcessor:
         # Identify the outliers
         # outliers_condition = mc1 > mc1.quantile(.95)
         outliers_condition = mc1 == 1.0
-        # Print out the number of outliers
-        print('Number of outliers: ', outliers_condition.sum())
         # Replace the outliers with NaN
         df.loc[outliers_condition, 'harness|truthfulqa:mc1'] = np.nan
         return df

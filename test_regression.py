@@ -17,6 +17,7 @@ class TestRegression(unittest.TestCase):
 
         #TODO
         # if there are no untracked changes, the dataframes should be the same
+        # if there is no file saved for the current commit, save a file for the current commit
         # instead check the last commit to the one previous to that one
         # if there are untracked changes, the dataframes should be different
         # either optionally take a parameter for this test or extract the comparison logic so that it can be used separately to 

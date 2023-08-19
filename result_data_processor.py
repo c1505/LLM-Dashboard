@@ -48,6 +48,19 @@ class ResultDataProcessor:
         df.index = (df.index.str.replace('mc\|0', 'mc2', regex=True))
         df = df.loc[['harness|truthfulqa:mc2']]
         return df[[model_name]]
+    
+    # remove extreme outliers from column harness|truthfulqa:mc1
+    def _remove_mc1_outliers(self, df):
+        mc1 = df['harness|truthfulqa:mc1']
+        # Identify the outliers
+        # outliers_condition = mc1 > mc1.quantile(.95)
+        outliers_condition = mc1 == 1.0
+        # Print out the number of outliers
+        print('Number of outliers: ', outliers_condition.sum())
+        # Replace the outliers with NaN
+        df.loc[outliers_condition, 'harness|truthfulqa:mc1'] = np.nan
+        return df
+
 
     
     @staticmethod
@@ -118,6 +131,9 @@ class ResultDataProcessor:
         cols = data.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         data = data[cols]
+
+        # remove extreme outliers from column harness|truthfulqa:mc1
+        data = self._remove_mc1_outliers(data)
 
         return data
     

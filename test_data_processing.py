@@ -34,6 +34,13 @@ class TestResultDataProcessor(unittest.TestCase):
     def test_truthfulqa_mc(self):
         data = self.processor.data
         self.assertNotIn('truthfulqa:mc', data.columns)
+
+    # check for extreme outliers in mc1 column
+    def test_mc1_outliers(self):
+        data = self.processor.data
+        mc1 = data['harness|truthfulqa:mc1']
+        self.assertLess(mc1.max(), 1.0)
+        self.assertGreater(mc1.min(), 0.0)
         
 if __name__ == '__main__':
     unittest.main()

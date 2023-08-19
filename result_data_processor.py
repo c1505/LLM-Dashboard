@@ -137,6 +137,8 @@ class ResultDataProcessor:
         # remove extreme outliers from column harness|truthfulqa:mc1
         data = self._remove_mc1_outliers(data)
 
+        data = data.drop(columns=['organization'])
+
         return data
     
     def rank_data(self):

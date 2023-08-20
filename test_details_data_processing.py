@@ -58,6 +58,19 @@ class TestDetailsDataProcessor(unittest.TestCase):
         # print(files)
         self.assertIsInstance(files, list)
 
+    def test_build_url_harness_types(self):
+        test_cases = [
+            ('results/shaohang/Sparse0.5_OPT-1.3/results_2023-07-19T19:10:31.005235.json', 'details',
+             'https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/shaohang/Sparse0.5_OPT-1.3/details_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-19T19%3A10%3A31.005235.json'),
+            ('results/shaohang/Sparse0.5_OPT-1.3/results_2023-07-19T19:10:31.005235.json', 'queries',
+             'https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/shaohang/Sparse0.5_OPT-1.3/queries_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-19T19%3A10%3A31.005235.json')
+        ]
+
+        for file_path, harness_type, expected in test_cases:
+            self.assertEqual(self.processor.build_url(file_path, harness_type), expected,
+                             f"Test failed for file_path: {file_path}, harness_type: {harness_type}")
+
+
         
 if __name__ == '__main__':
     unittest.main()

@@ -16,7 +16,14 @@ class DetailsDataProcessor:
         # self.data = self.process_data()
         # self.ranked_data = self.rank_data()
 
-
+    def _find_files(self, directory='results', pattern='results*.json'):
+        matching_files = []  # List to hold matching filenames
+        for root, dirs, files in os.walk(directory):
+            for basename in files:
+                if fnmatch.fnmatch(basename, pattern):
+                    filename = os.path.join(root, basename)
+                    matching_files.append(filename)  # Append the matching filename to the list
+        return matching_files  # Return the list of matching filenames
 
     # download a file from a single url and save it to a local directory
     @staticmethod
@@ -52,14 +59,7 @@ class DetailsDataProcessor:
         return constructed_url
 
 
-    def _find_files(self, directory, pattern):
-        matching_files = []  # List to hold matching filenames
-        for root, dirs, files in os.walk(directory):
-            for basename in files:
-                if fnmatch.fnmatch(basename, pattern):
-                    filename = os.path.join(root, basename)
-                    matching_files.append(filename)  # Append the matching filename to the list
-        return matching_files  # Return the list of matching filenames
+
 
     
     def pipeline(self):

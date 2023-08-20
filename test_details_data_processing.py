@@ -16,9 +16,17 @@ class TestDetailsDataProcessor(unittest.TestCase):
         # self.assertIsInstance(data, pd.DataFrame)
 
     def test_download_file(self):
-        DetailsDataProcessor._download_file('https://www.google.com', 'test.html')
+        DetailsDataProcessor.download_file('https://www.google.com', 'test.html')
         self.assertTrue(os.path.exists('test.html'))
         os.remove('test.html')
+
+    def test_generate_url(self):
+        results_file_path = "64bits/LexPodLM-13B/results_2023-07-25T13:41:51.227672.json"
+        expected_url = 'https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/64bits/LexPodLM-13B/details_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-25T13%3A41%3A51.227672.json'
+
+
+        constructed_url = self.processor.generate_url(results_file_path)
+        self.assertEqual(expected_url, constructed_url)
 
         
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ class DetailsDataProcessor:
     # Download 
     #url example https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/64bits/LexPodLM-13B/details_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-25T13%3A41%3A51.227672.json
     
-    def __init__(self, directory='results', pattern='moral*.json'):
+    def __init__(self, directory='results', pattern='results*.json'):
         self.directory = directory
         self.pattern = pattern
         # self.data = self.process_data()
@@ -73,7 +73,8 @@ class DetailsDataProcessor:
     
     def pipeline(self):
         dataframes = []
-        for file_path in self._find_files(self.directory, self.pattern):
+        file_paths = self._find_files(self.directory, self.pattern)
+        for file_path in file_paths:
             print(file_path)
             url = self.generate_url(file_path)
             file_path = file_path.split('/')[-1]

@@ -36,10 +36,10 @@ class TestDetailsDataProcessor(unittest.TestCase):
 
     def test_find_files(self):
         directory = 'results'
-        pattern = '*moral*.json'
+        pattern = 'results*.json'
         files = self.processor._find_files(directory, pattern)
-        breakpoint()
-        print(files)
+        # breakpoint()
+        # print(files)
         self.assertIsInstance(files, list)
 
         

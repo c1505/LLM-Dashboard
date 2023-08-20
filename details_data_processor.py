@@ -48,7 +48,7 @@ class DetailsDataProcessor:
         # Format the timestamp as a string, suitable for use in a filename
         filename_timestamp = timestamp.strftime("%Y-%m-%dT%H-%M-%S")
 
-        # Example usage in a filename
+        # Construct the full save file path
         save_file_path = save_file_path + filename_timestamp + ".json"
 
         print(save_file_path)  # Output will be something like "results_2023-08-20T12-34-56.txt"
@@ -56,23 +56,28 @@ class DetailsDataProcessor:
         try:
             # Sending a GET request
             r = requests.get(url, allow_redirects=True)
-            r.raise_for_status() # Raises an HTTPError if the HTTP request returned an unsuccessful status code
+            r.raise_for_status()  # Raises an HTTPError if the HTTP request returned an unsuccessful status code
             
             # Writing the content to the specified file
             with open(save_file_path, 'wb') as file:
                 file.write(r.content)
-            
+
             print(f"Successfully downloaded file: {save_file_path}")
-        except requests.ConnectionError:
+        except requests.ConnectionError as e:
             print(f"Failed to connect to the URL: {url}")
+            raise e
         except requests.HTTPError as e:
             print(f"HTTP error occurred: {e}")
-        except FileNotFoundError:
+            raise e
+        except FileNotFoundError as e:
             print(f"File not found at path: {save_file_path}")
+            raise e
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+            raise e
 
         return None
+
 
 
     @staticmethod

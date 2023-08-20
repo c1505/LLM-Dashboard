@@ -5,6 +5,7 @@ import json
 import re
 import numpy as np
 import requests
+from urllib.parse import quote
 
 class DetailsDataProcessor:
     # Download 
@@ -42,25 +43,15 @@ class DetailsDataProcessor:
         return df
 
     @staticmethod
-    def generate_url(file_path):
-        base_url = 'https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/'
-
-
-        organization = '64bits'
-        model = 'LexPodLM-13B'
-        filename = '_2023-07-25T13%3A41%3A51.227672.json'
-        # extract organization, model, and filename from file_path instead of hardcoding
-        # filename = file_path.split('/')[-1]
-
-
-
-        other_chunk = 'details_harness%7ChendrycksTest-moral_scenarios%7C5'
-        constructed_url = base_url + organization + '/' + model + '/' + other_chunk + filename
-        return constructed_url
-
-
-
-
+    def build_url(file_path):
+        segments = file_path.split('/')
+        bits = segments[1]
+        model_name = segments[2]
+        timestamp = segments[3].split('_')[1]
+        
+        url = f'https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/{bits}/{model_name}/details_harness%7ChendrycksTest-moral_scenarios%7C5_{quote(timestamp, safe="")}'
+        print(url)
+        return url
     
     def pipeline(self):
         dataframes = []

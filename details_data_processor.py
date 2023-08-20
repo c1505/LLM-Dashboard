@@ -10,11 +10,13 @@ class DetailsDataProcessor:
     # Download 
     #url example https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/64bits/LexPodLM-13B/details_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-25T13%3A41%3A51.227672.json
     
-    def __init__(self, directory='results', pattern='results*.json'):
+    def __init__(self, directory='results', pattern='moral*.json'):
         self.directory = directory
         self.pattern = pattern
         # self.data = self.process_data()
         # self.ranked_data = self.rank_data()
+
+
 
     # download a file from a single url and save it to a local directory
     @staticmethod
@@ -49,7 +51,35 @@ class DetailsDataProcessor:
         constructed_url = base_url + organization + '/' + model + '/' + other_chunk + filename
         return constructed_url
 
+    # @staticmethod
+    # def _find_files(directory, pattern):
+    #     for root, dirs, files in os.walk(directory):
+    #         for basename in files:
+    #             if fnmatch.fnmatch(basename, pattern):
+    #                 filename = os.path.join(root, basename)
+    #                 yield filename
+                
 
+
+    def _find_files(self, directory, pattern):
+        matching_files = []  # List to hold matching filenames
+        for root, dirs, files in os.walk(directory):
+            for basename in files:
+                if fnmatch.fnmatch(basename, pattern):
+                    filename = os.path.join(root, basename)
+                    matching_files.append(filename)  # Append the matching filename to the list
+        return matching_files  # Return the list of matching filenames
+
+    
+    def pipeline(self):
+        dataframes = []
+        for file_path in self._find_files(self.directory, self.pattern):
+            print(file_path)
+            url = self.generate_url(file_path)
+            file_path = file_path.split('/')[-1]
+            df = self.single_file_pipeline(url, file_path)
+            dataframes.append(df)
+        return dataframes
     # @staticmethod
     # def _find_files(directory, pattern):
     #     for root, dirs, files in os.walk(directory):

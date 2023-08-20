@@ -28,6 +28,20 @@ class TestDetailsDataProcessor(unittest.TestCase):
         constructed_url = self.processor.generate_url(results_file_path)
         self.assertEqual(expected_url, constructed_url)
 
+    def test_pipeline(self):
+        df = self.processor.pipeline()
+        print(100 * "****")
+        print(df)
+        self.assertIsInstance(df, pd.DataFrame)
+
+    def test_find_files(self):
+        directory = 'results'
+        pattern = '*moral*.json'
+        files = self.processor._find_files(directory, pattern)
+        breakpoint()
+        print(files)
+        self.assertIsInstance(files, list)
+
         
 if __name__ == '__main__':
     unittest.main()

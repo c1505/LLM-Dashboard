@@ -16,7 +16,7 @@ class TestDetailsDataProcessor(unittest.TestCase):
         # self.assertIsInstance(data, pd.DataFrame)
 
     def test_download_file(self):
-        DetailsDataProcessor.download_file('https://www.google.com', 'test.html')
+        DetailsDataProcessor.download_file('https://www.google.com', 'test_file_please_remove')
         self.assertTrue(os.path.exists('test.html'))
         os.remove('test.html')
 

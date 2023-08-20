@@ -6,6 +6,9 @@ import re
 import numpy as np
 import requests
 from urllib.parse import quote
+from datetime import datetime
+
+
 
 class DetailsDataProcessor:
     # Download 
@@ -27,10 +30,50 @@ class DetailsDataProcessor:
         return matching_files  # Return the list of matching filenames
 
     # download a file from a single url and save it to a local directory
+    # @staticmethod
+    # def download_file(url, file_path):
+    #     #TODO: I may not need to save the file.  I can just read it in and convert to a dataframe
+    #     r = requests.get(url, allow_redirects=True)
+    #     open(file_path, 'wb').write(r.content)
+    #     # return dataframe
+    #     df = pd.DataFrame(r.content)
+    #     return df
+    
+
     @staticmethod
-    def download_file(url, filename):
-        r = requests.get(url, allow_redirects=True)
-        open(filename, 'wb').write(r.content)
+    def download_file(url, save_file_path):
+        # Get the current date and time
+        timestamp = datetime.now()
+
+        # Format the timestamp as a string, suitable for use in a filename
+        filename_timestamp = timestamp.strftime("%Y-%m-%dT%H-%M-%S")
+
+        # Example usage in a filename
+        save_file_path = save_file_path + filename_timestamp + ".json"
+
+        print(save_file_path)  # Output will be something like "results_2023-08-20T12-34-56.txt"
+
+        try:
+            # Sending a GET request
+            r = requests.get(url, allow_redirects=True)
+            r.raise_for_status() # Raises an HTTPError if the HTTP request returned an unsuccessful status code
+            
+            # Writing the content to the specified file
+            with open(save_file_path, 'wb') as file:
+                file.write(r.content)
+            
+            print(f"Successfully downloaded file: {save_file_path}")
+        except requests.ConnectionError:
+            print(f"Failed to connect to the URL: {url}")
+        except requests.HTTPError as e:
+            print(f"HTTP error occurred: {e}")
+        except FileNotFoundError:
+            print(f"File not found at path: {save_file_path}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+
+        return None
+
 
     @staticmethod
     def single_file_pipeline(url, filename):

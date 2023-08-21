@@ -15,9 +15,16 @@ class DetailsDataProcessor:
     # Download 
     #url example https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/64bits/LexPodLM-13B/details_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-25T13%3A41%3A51.227672.json
     
+    # def __init__(self, directory='results', pattern='results*.json'):
+    #     self.directory = directory
+    #     self.pattern = pattern
+
     def __init__(self, directory='results', pattern='results*.json'):
         self.directory = directory
         self.pattern = pattern
+        if not os.path.exists('details_data'):
+            os.makedirs('details_data')
+
 
     def _find_files(self, directory='results', pattern='results*.json'):
         matching_files = []  # List to hold matching filenames
@@ -94,12 +101,20 @@ class DetailsDataProcessor:
         return url
     
     def pipeline(self):
-        dataframes = []
+        error_count = 0
+        success_count = 0
         file_paths = self._find_files(self.directory, self.pattern)
         for file_path in file_paths:
-            print(file_path)
-            url = self.generate_url(file_path)
-            file_path = file_path.split('/')[-1]
-            df = self.single_file_pipeline(url, file_path)
-            dataframes.append(df)
-        return dataframes
+            print(f"Processing file path: {file_path}")
+            url = self.build_url(file_path)
+            if url:
+                errors, successes = self.download_file(url)
+                error_count += errors
+                success_count += successes
+            else:
+                print(f"Error building URL for file path: {file_path}")
+                error_count += 1
+
+        print(f"Downloaded {success_count} files successfully. Encountered {error_count} errors.")
+        return success_count, error_count
+

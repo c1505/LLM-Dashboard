@@ -70,7 +70,21 @@ class TestDetailsDataProcessor(unittest.TestCase):
             self.assertEqual(self.processor.build_url(file_path, harness_type), expected,
                              f"Test failed for file_path: {file_path}, harness_type: {harness_type}")
 
+    def test_download_file_filename_format(self):
+        url = "https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/64bits/LexPodLM-13B/details_harness%7ChendrycksTest-moral_scenarios%7C5_2023-07-25T13%3A41%3A51.227672.json"
+        directory = 'details_data'
+        error_count, success_count = self.processor.download_file(url, directory)
 
-        
+        # Check that the download was successful
+        self.assertEqual(success_count, 1)
+        self.assertEqual(error_count, 0)
+
+        # Expected file name
+        expected_file_name = "64bits_LexPodLM-13B_moral_scenarios.json"
+
+        # Check that the file was created with the expected name
+        self.assertTrue(expected_file_name in os.listdir(directory),
+                        f"File with expected name {expected_file_name} not found in directory {directory}")
+
 if __name__ == '__main__':
     unittest.main()

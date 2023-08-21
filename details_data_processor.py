@@ -72,7 +72,7 @@ class DetailsDataProcessor:
         segments = url.split('/')
         organization = segments[-3]
         model_name = segments[-2]
-        task = segments[-1].split('_')[0]  # Assuming task is part of the last segment
+        task = url.split('%7ChendrycksTest-')[1].split('%7C')[0]
 
         # Construct the filename
         safe_file_name = f"{organization}_{model_name}_{task}.json"

@@ -28,28 +28,27 @@ class DetailsDataProcessor:
                     matching_files.append(filename)  # Append the matching filename to the list
         return matching_files  # Return the list of matching filenames
 
+
     @staticmethod
-    def download_file(url, save_file_path):
-        #TODO: I may not need to save the file.  I can just read it in and convert to a dataframe
-        # Get the current date and time
+    def download_file(url, directory='details_data'):
+        # Define the prefix to be removed from the URL
+        url_prefix = "https://huggingface.co/datasets/open-llm-leaderboard/details/resolve/main/"
+
+        # Remove the prefix from the URL
+        file_name_part = url.replace(url_prefix, '')
+
+        # Replace characters that don't play nice with file systems
+        safe_file_name = re.sub(r'[<>:"/\\|?*]', '_', file_name_part)  # Replace with '_'
+
+        save_file_path = os.path.join(directory, safe_file_name)
+
         error_count = 0
         success_count = 0
-        # timestamp = datetime.now()
-
-        # Format the timestamp as a string, suitable for use in a filename
-        # filename_timestamp = timestamp.strftime("%Y-%m-%dT%H-%M-%S")
-
-        # Generate a unique UUID
-        unique_id = uuid.uuid4()
-
-        # Append the UUID to the filename
-        save_file_path = save_file_path  + "_" + str(unique_id) + ".json"
-
         try:
             # Sending a GET request
             r = requests.get(url, allow_redirects=True)
-            r.raise_for_status()  # Raises an HTTPError if the HTTP request returned an unsuccessful status code
-            
+            r.raise_for_status()
+
             # Writing the content to the specified file
             with open(save_file_path, 'wb') as file:
                 file.write(r.content)
@@ -63,8 +62,8 @@ class DetailsDataProcessor:
             error_count += 1
         except Exception as e:
             error_count += 1
-        return error_count, success_count
 
+        return error_count, success_count
 
 
     @staticmethod

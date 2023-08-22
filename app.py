@@ -155,7 +155,7 @@ data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
 st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 800+ Open Source Models Across 57 Diverse Evaluation Tasks')
-st.markdown("""***Last updated August 18th***""")
+st.markdown("""***Last updated August 22th***""")
 st.markdown("""
             Hugging Face has run evaluations on over 800 open source models and provides results on a
             [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 

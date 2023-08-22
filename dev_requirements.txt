@@ -1,0 +1,2 @@
+# packages that are useful for local development and exploration, but are not needed for the deployed app
+gradio_client

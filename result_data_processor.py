@@ -140,7 +140,19 @@ class ResultDataProcessor:
         # remove extreme outliers from column harness|truthfulqa:mc1
         data = self._remove_mc1_outliers(data)
 
+        data = self.manual_removal_of_models(data)
+
         return data
+    
+    def manual_removal_of_models(self, df):
+    # remove models verified to be trained on evaluation data
+        # load the list of models
+        with open('contaminated_models.txt') as f:
+            contaminated_models = f.read().splitlines()
+        # remove the models from the dataframe
+        df = df[~df.index.isin(contaminated_models)]
+        return df
+
     
     def rank_data(self):
         # add rank for each column to the dataframe

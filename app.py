@@ -120,37 +120,6 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
     unique_top_differences_tasks = list(set(top_differences_table['Task'].tolist()))
     return top_differences_table, unique_top_differences_tasks
 
-
-# def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters', 'organization']):
-#     # Drop specified columns and create a new DataFrame
-#     new_df = df.drop(columns=exclude_columns)
-    
-#     # Compute differences between target model and closest models, taking absolute values
-#     differences = new_df.loc[closest_models].sub(new_df.loc[target_model]).abs()
-
-#     # Unstack the differences
-#     unstacked_differences = differences.unstack()
-
-#     # Convert object types to numeric, ignoring errors to leave non-convertible elements as NaN
-#     unstacked_differences = pd.to_numeric(unstacked_differences, errors='coerce')
-
-#     # Find the top num_differences
-#     top_differences = unstacked_differences.nlargest(num_differences)
-
-#     # Convert the top differences to a DataFrame for display
-#     top_differences_table = pd.DataFrame({
-#         'Task': [idx[0] for idx in top_differences.index],
-#         'Difference': top_differences.values
-#     })
-
-#     # Ensure that only unique tasks are returned
-#     unique_top_differences_tasks = list(set(top_differences_table['Task'].tolist()))
-
-#     return top_differences_table, unique_top_differences_tasks
-
-
-
-
 data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')

@@ -123,7 +123,7 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
 data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
-st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 800+ Open Source Models Across 57 Diverse Evaluation Tasks')
+st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 1100+ Open Source Models Across 57 Diverse Evaluation Tasks')
 st.markdown("""***Last updated August 22th***""")
 st.markdown("""**Models that are suspected to have training data contaminated with evaluation data have been removed.**""")
 st.markdown("""

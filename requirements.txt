@@ -8,6 +8,4 @@ statsmodels
 numpy
 matplotlib
 
-# exploratory data analysis
-seaborn
-nbformat
+

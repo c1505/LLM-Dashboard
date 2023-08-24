@@ -13,14 +13,17 @@ class ResultDataProcessor:
         self.data = self.process_data()
         self.ranked_data = self.rank_data()
 
-    @staticmethod
-    def _find_files(directory, pattern):
+    def _find_files(self, directory='results', pattern='results*.json'):
+        matching_files = {}
         for root, dirs, files in os.walk(directory):
             for basename in files:
                 if fnmatch.fnmatch(basename, pattern):
                     filename = os.path.join(root, basename)
-                    yield filename
-    
+                    matching_files[root] = filename
+        matching_files = {key: value for key, value in matching_files.items() if 'gpt-j-6b' not in key}
+        matching_files = list(matching_files.values())
+        return matching_files
+
     def _read_and_transform_data(self, filename):
         with open(filename) as f:
             data = json.load(f)

@@ -123,11 +123,11 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
 data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
-st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 900+ Open Source Models Across 57 Diverse Evaluation Tasks')
-st.markdown("""***Last updated August 22th***""")
+st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 1000+ Open Source Models Across 57 Diverse Evaluation Tasks')
+st.markdown("""***Last updated August 26th***""")
 st.markdown("""**Models that are suspected to have training data contaminated with evaluation data have been removed.**""")
 st.markdown("""
-            Hugging Face has run evaluations on over 900 open source models and provides results on a
+            Hugging Face runs evaluations on open source models and provides results on a
             [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 
             The Hugging Face leaderboard currently displays the overall result for Measuring Massive Multitask Language Understanding (MMLU), but not the results for individual tasks.
             This app provides a way to explore the results for individual tasks and compare models across tasks.

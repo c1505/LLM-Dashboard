@@ -5,89 +5,9 @@ from result_data_processor import ResultDataProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
+from plotting_utils import plot_top_n, create_radar_chart_unfilled, create_line_chart, create_plot
 
 st.set_page_config(layout="wide")
-
-def plot_top_n(df, target_column, n=10):
-    top_n = df.nlargest(n, target_column)
-
-    # Initialize the bar plot
-    fig, ax1 = plt.subplots(figsize=(10, 5))
-
-    # Set width for each bar and their positions
-    width = 0.28
-    ind = np.arange(len(top_n))
-
-    # Plot target_column and MMLU_average on the primary y-axis with adjusted positions
-    ax1.bar(ind - width, top_n[target_column], width=width, color='blue', label=target_column)
-    ax1.bar(ind, top_n['MMLU_average'], width=width, color='orange', label='MMLU_average')
-
-    # Set the primary y-axis labels and title
-    ax1.set_title(f'Top {n} performing models on {target_column}')
-    ax1.set_xlabel('Model')
-    ax1.set_ylabel('Score')
-
-    # Create a secondary y-axis for Parameters
-    ax2 = ax1.twinx()
-
-    # Plot Parameters as bars on the secondary y-axis with adjusted position
-    ax2.bar(ind + width, top_n['Parameters'], width=width, color='red', label='Parameters')
-
-    # Set the secondary y-axis labels
-    ax2.set_ylabel('Parameters', color='red')
-    ax2.tick_params(axis='y', labelcolor='red')
-
-    # Set the x-ticks and their labels
-    ax1.set_xticks(ind)
-    ax1.set_xticklabels(top_n.index, rotation=45, ha="right")
-
-    # Adjust the legend
-    fig.tight_layout()
-    fig.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
-    # Show the plot
-    st.pyplot(fig)
-
-# Function to create an unfilled radar chart
-def create_radar_chart_unfilled(df, model_names, metrics):
-    fig = go.Figure()
-    min_value = df.loc[model_names, metrics].min().min()
-    max_value = df.loc[model_names, metrics].max().max()
-    for model_name in model_names:
-        values_model = df.loc[model_name, metrics]
-        fig.add_trace(go.Scatterpolar(
-            r=values_model,
-            theta=metrics,
-            name=model_name
-        ))
-
-    fig.update_layout(
-        polar=dict(
-            radialaxis=dict(
-                visible=True,
-                range=[min_value, max_value]
-            )),
-        showlegend=True,
-        width=800,  # Change the width as needed
-        height=600   # Change the height as needed
-    )
-    return fig
-
-
-
-# Function to create a line chart
-def create_line_chart(df, model_names, metrics):
-    line_data = []
-    for model_name in model_names:
-        values_model = df.loc[model_name, metrics]
-        for metric, value in zip(metrics, values_model):
-            line_data.append({'Model': model_name, 'Metric': metric, 'Value': value})
-
-    line_df = pd.DataFrame(line_data)
-
-    fig = px.line(line_df, x='Metric', y='Value', color='Model', title='Comparison of Models', line_dash_sequence=['solid'])
-    fig.update_layout(showlegend=True)
-    return fig
 
 def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters', 'organization']):
     # Calculate the absolute differences for each task between the target model and the closest models
@@ -103,6 +23,10 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
     # Ensure that only unique tasks are returned
     unique_top_differences_tasks = list(set(top_differences_table['Task'].tolist()))
     return top_differences_table, unique_top_differences_tasks
+
+
+
+# Main Application
 
 data_provider = ResultDataProcessor()
 
@@ -171,9 +95,9 @@ column_search_query = st.text_input("Filter by Column/Task Name:", "")
 # Get the columns that contain the search query
 matching_columns = [col for col in filtered_data.columns if column_search_query.lower() in col.lower()]
 
-# Display the DataFrame with only the matching columns
-st.markdown("## Sortable Results")
-st.dataframe(filtered_data[matching_columns])
+# # Display the DataFrame with only the matching columns
+# st.markdown("## Sortable Results")
+# st.dataframe(filtered_data[matching_columns])
 
 
 # CSV download
@@ -189,70 +113,43 @@ st.download_button(
 )
 
 
-def create_plot(df, x_values, y_values, models=None, title=None):
-    if models is not None:
-        df = df[df.index.isin(models)]
+# Moral Scenarios section
+st.markdown("## Why are large language models so bad at the moral scenarios task?")
+st.markdown("### The structure of the task is odd")
 
-    # remove rows with NaN values
-    df = df.dropna(subset=[x_values, y_values])
+# - Are the models actually bad at moral reasoning ?
+# - Is it the structure of the task that is the causing the poor performance ?
+#     - Are there other tasks with questions in a similar structure ? 
+#     - How do models perform when the structure of the task is changed ?  
+st.markdown("### Moral Scenarios Performance")
+def show_random_moral_scenarios_question():
+    moral_scenarios_data = pd.read_csv('moral_scenarios_questions.csv')
+    random_question = moral_scenarios_data.sample()
+    expander = st.expander("Show a random moral scenarios question")
+    expander.write(random_question['query'].values[0])
 
-    plot_data = pd.DataFrame({
-        'Model': df.index,
-        x_values: df[x_values],
-        y_values: df[y_values],
-    })
+show_random_moral_scenarios_question()
 
-    plot_data['color'] = 'purple'
-    fig = px.scatter(plot_data, x=x_values, y=y_values, color='color', hover_data=['Model'], trendline="ols")
-    
-    # If title is not provided, use x_values vs. y_values as the default title
-    if title is None:
-        title = x_values + " vs. " + y_values
-    
-    layout_args = dict(
-        showlegend=False, 
-        xaxis_title=x_values,
-        yaxis_title=y_values,
-        xaxis=dict(),
-        yaxis=dict(),
-        title=title,
-        height=500,
-        width=1000,
-    )
-    fig.update_layout(**layout_args)
-    
-    # Add a dashed line at 0.25 for the y_values
-    x_min = df[x_values].min()
-    x_max = df[x_values].max()
+st.write("""
+         While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  
+         There are no models with less than 13 billion parameters with performance much better than random chance. Further investigation into other capabilities that emerge at 13 billion parameters could help
+         identify capabilities that are important for moral reasoning.
+            """)
 
-    y_min = df[y_values].min()
-    y_max = df[y_values].max()
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
+st.plotly_chart(fig)
+st.write()
 
-    if x_values.startswith('MMLU'): 
-        fig.add_shape(
-        type='line',
-        x0=0.25, x1=0.25,
-        y0=y_min, y1=y_max,
-        line=dict(
-            color='red',
-            width=2,
-            dash='dash'
-        )
-        )
 
-    if y_values.startswith('MMLU'):
-        fig.add_shape(
-        type='line',
-        x0=x_min, x1=x_max,
-        y0=0.25, y1=0.25,
-        line=dict(
-            color='red',
-            width=2,
-            dash='dash'
-        )
-        )
 
-    return fig
+fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
+st.plotly_chart(fig)
+
+
+
+
+
+
 
 
 # Custom scatter plots
@@ -325,30 +222,7 @@ plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
 st.plotly_chart(fig)
 
-# Moral scenarios plots
-st.markdown("### Moral Scenarios Performance")
-def show_random_moral_scenarios_question():
-    moral_scenarios_data = pd.read_csv('moral_scenarios_questions.csv')
-    random_question = moral_scenarios_data.sample()
-    expander = st.expander("Show a random moral scenarios question")
-    expander.write(random_question['query'].values[0])
 
-show_random_moral_scenarios_question()
-
-st.write("""
-         While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  
-         There are no models with less than 13 billion parameters with performance much better than random chance. Further investigation into other capabilities that emerge at 13 billion parameters could help
-         identify capabilities that are important for moral reasoning.
-            """)
-
-fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
-st.plotly_chart(fig)
-st.write()
-
-
-
-fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
-st.plotly_chart(fig)
 
 
 

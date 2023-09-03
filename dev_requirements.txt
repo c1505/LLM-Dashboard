@@ -4,3 +4,7 @@ ipywidgets
 nbformat
 # exploratory data analysis
 seaborn
+
+#currently specifically for moral reasoning project
+replicate
+python-dotenv

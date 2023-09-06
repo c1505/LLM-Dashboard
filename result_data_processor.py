@@ -20,6 +20,7 @@ class ResultDataProcessor:
                 if fnmatch.fnmatch(basename, pattern):
                     filename = os.path.join(root, basename)
                     matching_files[root] = filename
+        # TODO decide on removing this since I am catching the error when processing the file
         matching_files = {key: value for key, value in matching_files.items() if 'gpt-j-6b' not in key}
         matching_files = list(matching_files.values())
         return matching_files
@@ -94,17 +95,22 @@ class ResultDataProcessor:
         dataframes = []
         organization_names = []
         for filename in self._find_files(self.directory, self.pattern):
-            raw_data = self._read_and_transform_data(filename)
-            split_path = filename.split('/')
-            model_name = split_path[2]
-            organization_name = split_path[1]
-            cleaned_data = self._cleanup_dataframe(raw_data, model_name)
-            mc1 = self._extract_mc1(raw_data, model_name)
-            mc2 = self._extract_mc2(raw_data, model_name)
-            cleaned_data = pd.concat([cleaned_data, mc1])
-            cleaned_data = pd.concat([cleaned_data, mc2])
-            organization_names.append(organization_name)
-            dataframes.append(cleaned_data)
+            try:
+                raw_data = self._read_and_transform_data(filename)
+                split_path = filename.split('/')
+                model_name = split_path[2]
+                organization_name = split_path[1]
+                cleaned_data = self._cleanup_dataframe(raw_data, model_name)
+                mc1 = self._extract_mc1(raw_data, model_name)
+                mc2 = self._extract_mc2(raw_data, model_name)
+                cleaned_data = pd.concat([cleaned_data, mc1])
+                cleaned_data = pd.concat([cleaned_data, mc2])
+                organization_names.append(organization_name)
+                dataframes.append(cleaned_data)
+            except Exception as e:
+                print(f'Error processing {filename}')
+                print("The error is: ", e)
+                continue
 
 
         data = pd.concat(dataframes, axis=1).transpose()

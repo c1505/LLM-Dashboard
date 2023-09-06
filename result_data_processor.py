@@ -4,10 +4,15 @@ import fnmatch
 import json
 import re
 import numpy as np
+import logging
+
+logging.basicConfig(filename='error_log.log', level=logging.ERROR)
 
 class ResultDataProcessor:
     
+
     def __init__(self, directory='results', pattern='results*.json'):
+        
         self.directory = directory
         self.pattern = pattern
         self.data = self.process_data()
@@ -108,8 +113,8 @@ class ResultDataProcessor:
                 organization_names.append(organization_name)
                 dataframes.append(cleaned_data)
             except Exception as e:
-                print(f'Error processing {filename}')
-                print("The error is: ", e)
+                logging.error(f'Error processing {filename}')
+                logging.error(f'The error is: {e}')
                 continue
 
 

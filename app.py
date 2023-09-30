@@ -5,11 +5,11 @@ from result_data_processor import ResultDataProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
-from streamlit.components.v1 import html
 
 st.set_page_config(layout="wide")
 
 def load_csv_data(file_path):
+
     return pd.read_csv(file_path)
 
 
@@ -109,7 +109,7 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
     unique_top_differences_tasks = list(set(top_differences_table['Task'].tolist()))
     return top_differences_table, unique_top_differences_tasks
 
-data_provider = ResultDataProcessor()
+# data_provider = ResultDataProcessor()
 
 # st.title('Model Evaluation Results including MMLU by task')
 st.title('Exploring the Characteristics of Large Language Models: An Interactive Portal for Analyzing 1100+ Open Source Models Across 57 Diverse Evaluation Tasks')
@@ -131,27 +131,29 @@ data_df = load_csv_data(data_path)
 filters = st.checkbox('Select Models and/or Evaluations')
 
 # Initialize selected columns with "Parameters" and "MMLU_average" if filters are checked
-selected_columns = ['Parameters', 'MMLU_average'] if filters else data_provider.data.columns.tolist()
+# selected_columns = ['Parameters', 'MMLU_average'] if filters else data_provider.data.columns.tolist()
+selected_columns = ['Parameters', 'MMLU_average'] if filters else data_df.columns.tolist()
 
 # Initialize selected models as empty if filters are checked
-selected_models = [] if filters else data_provider.data.index.tolist()
+selected_models = [] if filters else data_df.index.tolist()
 
 if filters:
     # Create multi-select for columns with default selection
     selected_columns = st.multiselect(
         'Select Columns',
-        data_provider.data.columns.tolist(),
+        data_df.columns.tolist(),
         default=selected_columns
     )
 
     # Create multi-select for models without default selection
     selected_models = st.multiselect(
         'Select Models',
-        data_provider.data.index.tolist()
+        data_df.index.tolist()
     )
 
 # Get the filtered data
-filtered_data = data_provider.get_data(selected_models)
+# filtered_data = data_provider.get_data(selected_models)
+filtered_data = data_df
 
 # sort the table by the MMLU_average column
 filtered_data = filtered_data.sort_values(by=['MMLU_average'], ascending=False)

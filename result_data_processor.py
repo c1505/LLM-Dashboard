@@ -156,6 +156,10 @@ class ResultDataProcessor:
 
         data = self.manual_removal_of_models(data)
 
+        # save to csv with the current date as part of the filename
+
+        data.to_csv(f'processed_data_{pd.Timestamp.now().strftime("%Y-%m-%d")}.csv')
+        
         return data
     
     def manual_removal_of_models(self, df):

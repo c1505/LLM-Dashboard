@@ -9,19 +9,8 @@ from streamlit.components.v1 import html
 
 st.set_page_config(layout="wide")
 
-# Google Analytics code snippet
-google_analytics_code = """
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MT9QYR70MC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-MT9QYR70MC');
-</script>
-"""
-html(google_analytics_code, height=0)
-
+def load_csv_data(file_path):
+    return pd.read_csv(file_path)
 
 
 def plot_top_n(df, target_column, n=10):
@@ -134,6 +123,10 @@ st.markdown("""
             There are 57 tasks in the MMLU evaluation that cover a wide variety of subjects including Science, Math, Humanities, Social Science, Applied Science, Logic, and Security.
             [Preliminary analysis of MMLU-by-Task data](https://coreymorrisdata.medium.com/preliminary-analysis-of-mmlu-evaluation-data-insights-from-500-open-source-models-e67885aa364b)
             """)
+
+# Load the data into memory
+data_path = "result_data.csv"  # Replace with your actual file path
+data_df = load_csv_data(data_path)
 
 filters = st.checkbox('Select Models and/or Evaluations')
 

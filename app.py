@@ -9,8 +9,10 @@ import plotly.graph_objects as go
 st.set_page_config(layout="wide")
 
 def load_csv_data(file_path):
-
     return pd.read_csv(file_path)
+
+
+
 
 
 def plot_top_n(df, target_column, n=10):
@@ -127,6 +129,8 @@ st.markdown("""
 # Load the data into memory
 data_path = "result_data.csv"  # Replace with your actual file path
 data_df = load_csv_data(data_path)
+data_df.rename(columns={"Unnamed: 0": "Model Name"}, inplace=True)
+data_df.set_index("Model Name", inplace=True)
 
 filters = st.checkbox('Select Models and/or Evaluations')
 

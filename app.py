@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from result_data_processor import ResultDataProcessor
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
@@ -111,8 +110,6 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
     unique_top_differences_tasks = list(set(top_differences_table['Task'].tolist()))
     return top_differences_table, unique_top_differences_tasks
 
-# data_provider = ResultDataProcessor()
-
 # st.title('Model Evaluation Results including MMLU by task')
 st.title('Interactive Portal for Analyzing Open Source Large Language Models')
 st.markdown("""***Last updated September 30th***""")
@@ -135,7 +132,6 @@ data_df.set_index("Model Name", inplace=True)
 filters = st.checkbox('Select Models and/or Evaluations')
 
 # Initialize selected columns with "Parameters" and "MMLU_average" if filters are checked
-# selected_columns = ['Parameters', 'MMLU_average'] if filters else data_provider.data.columns.tolist()
 selected_columns = ['Parameters', 'MMLU_average'] if filters else data_df.columns.tolist()
 
 # Initialize selected models as empty if filters are checked

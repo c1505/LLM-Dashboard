@@ -124,7 +124,7 @@ st.markdown("""
             """)
 
 # Load the data into memory
-data_path = "result_data.csv"  # Replace with your actual file path
+data_path = "processed_data_2023-10-05.csv"  # Replace with your actual file path
 data_df = load_csv_data(data_path)
 data_df.rename(columns={"Unnamed: 0": "Model Name"}, inplace=True)
 data_df.set_index("Model Name", inplace=True)

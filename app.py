@@ -340,20 +340,22 @@ fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
 st.plotly_chart(fig)
 
 # Moral scenarios plots
-st.markdown("### Moral Scenarios Performance")
+st.markdown("### MMLU’s Moral Scenarios Benchmark Doesn’t Measure What You Think it Measures")
 def show_random_moral_scenarios_question():
     moral_scenarios_data = pd.read_csv('moral_scenarios_questions.csv')
     random_question = moral_scenarios_data.sample()
     expander = st.expander("Show a random moral scenarios question")
     expander.write(random_question['query'].values[0])
 
-show_random_moral_scenarios_question()
+
 
 st.write("""
-         While smaller models can perform well at many tasks, the model size threshold for decent performance on moral scenarios is much higher.  
-         There are no models with less than 13 billion parameters with performance much better than random chance. Further investigation into other capabilities that emerge at 13 billion parameters could help
-         identify capabilities that are important for moral reasoning.
+         After a deeper dive into the moral scenarios task, it appears that benchmark is not a valid measurement of moral judgement.
+         The challenges these models face are not rooted in understanding each scenario, but rather in the structure of the task itself.
+         I would recommend using a different benchmark for moral judgement. More details of the analysis can be found here: [MMLU’s Moral Scenarios Benchmark Doesn’t Measure What You Think it Measures ](https://medium.com/p/74fd6e512521)
             """)
+
+show_random_moral_scenarios_question()
 
 fig = create_plot(filtered_data, 'Parameters', 'MMLU_moral_scenarios', title="Impact of Parameter Count on Accuracy for Moral Scenarios")
 st.plotly_chart(fig)

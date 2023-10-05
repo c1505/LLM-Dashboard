@@ -180,10 +180,10 @@ if search_query:
 
 
 # Search box for columns
-column_search_query = st.text_input("Filter by Column/Task Name:", "")
+column_search_query = st.text_input("Filter by Column/Task Name:", "").split(',')
 
 # Get the columns that contain the search query
-matching_columns = [col for col in filtered_data.columns if column_search_query.lower() in col.lower()]
+matching_columns = [col for col in filtered_data.columns if any(query.lower() in col.lower() for query in column_search_query)]
 
 # Display the DataFrame with only the matching columns
 st.markdown("## Sortable Results")

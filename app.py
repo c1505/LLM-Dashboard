@@ -332,13 +332,6 @@ st.plotly_chart(fig_radar_top_differences)
 
 st.markdown("## Notable findings and plots")
 
-st.markdown('### Abstract Algebra Performance')
-st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
-plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
-
-fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
-st.plotly_chart(fig)
-
 # Moral scenarios plots
 st.markdown("### MMLU’s Moral Scenarios Benchmark Doesn’t Measure What You Think it Measures")
 def show_random_moral_scenarios_question():
@@ -366,8 +359,12 @@ st.write()
 fig = create_plot(filtered_data, 'MMLU_average', 'MMLU_moral_scenarios')
 st.plotly_chart(fig)
 
+st.markdown('### Abstract Algebra Performance')
+st.write("Small models showed surprisingly strong performance on the abstract algebra task.  A 6 Billion parameter model is tied for the best performance on this task and there are a number of other small models in the top 10.")
+plot_top_n(filtered_data, 'MMLU_abstract_algebra', 10)
 
-
+fig = create_plot(filtered_data, 'Parameters', 'MMLU_abstract_algebra')
+st.plotly_chart(fig)
 
 st.markdown("***Thank you to hugging face for running the evaluations and supplying the data as well as the original authors of the evaluations.***")
 

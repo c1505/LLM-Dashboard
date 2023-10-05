@@ -180,7 +180,7 @@ if search_query:
 
 
 # Search box for columns
-column_search_query = st.text_input("Filter by Column/Task Name:", "").split(',')
+column_search_query = st.text_input("Filter by Column/Task Name:", "").replace(" ", "").split(',')
 
 # Get the columns that contain the search query
 matching_columns = [col for col in filtered_data.columns if any(query.lower() in col.lower() for query in column_search_query)]

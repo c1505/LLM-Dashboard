@@ -112,7 +112,7 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
 
 # st.title('Model Evaluation Results including MMLU by task')
 st.title('Interactive Portal for Analyzing Open Source Large Language Models')
-st.markdown("""***Last updated September 30th***""")
+st.markdown("""***Last updated October 6th***""")
 st.markdown("""**Models that are suspected to have training data contaminated with evaluation data have been removed.**""")
 st.markdown("""
             Hugging Face runs evaluations on open source models and provides results on a
@@ -124,7 +124,7 @@ st.markdown("""
             """)
 
 # Load the data into memory
-data_path = "processed_data_2023-10-05.csv"  # Replace with your actual file path
+data_path = "processed_data_2023-10-06.csv"
 data_df = load_csv_data(data_path)
 data_df.rename(columns={"Unnamed: 0": "Model Name"}, inplace=True)
 data_df.set_index("Model Name", inplace=True)

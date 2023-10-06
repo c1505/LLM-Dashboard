@@ -170,6 +170,10 @@ class ResultDataProcessor:
         print(cols)
         data = data[cols]
 
+
+        new_columns = ['full_model_name'] + [col for col in data.columns if col != 'full_model_name']
+        data = data.reindex(columns=new_columns)
+
         # # Reorder columns to move 'organization' to the second position
         # cols = data.columns.tolist()
         # cols = cols[-1:] + cols[:-1]
@@ -183,6 +187,9 @@ class ResultDataProcessor:
         # data = self.manual_removal_of_models(data)
 
         # save to csv with the current date as part of the filename
+
+        # drop rows if MMLU_abstract_algebra is NaN
+        data = data.dropna(subset=['MMLU_abstract_algebra'])
 
         data.to_csv(f'processed_data_{pd.Timestamp.now().strftime("%Y-%m-%d")}.csv')
         

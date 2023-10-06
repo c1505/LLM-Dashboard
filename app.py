@@ -189,6 +189,35 @@ matching_columns = [col for col in filtered_data.columns if any(query.lower() in
 st.markdown("## Sortable Results")
 st.dataframe(filtered_data[matching_columns])
 
+
+import pandas as pd
+# import streamlit as st
+
+data_df = pd.DataFrame(
+    {
+        "apps": [
+            "https://roadmap.streamlit.app",
+            "https://extras.streamlit.app",
+            "https://issues.streamlit.app",
+            "https://30days.streamlit.app",
+        ],
+    }
+)
+
+st.data_editor(
+# st.experimental_data_editor(
+    data_df,
+    column_config={
+        "apps": st.column_config.LinkColumn(
+            "Trending apps",
+            help="The top trending Streamlit apps",
+            validate="^https://[a-z]+\.streamlit\.app$",
+            max_chars=100,
+        )
+    },
+    hide_index=True,
+)
+
 # CSV download
 
 filtered_data.index.name = "Model Name"

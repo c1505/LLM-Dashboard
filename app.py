@@ -189,6 +189,12 @@ matching_columns = [col for col in filtered_data.columns if any(query.lower() in
 st.markdown("## Sortable Results")
 st.dataframe(filtered_data[matching_columns])
 
+# create a dataframe with one column that is titled link. the content is https://huggingface.co/garage-bAInd/Platypus2-70B-instruct
+# the link should be clickable
+# the link should open in a new tab
+test_df = pd.DataFrame({'link': ['[link](https://huggingface.co/garage-bAInd/Platypus2-70B-instruct)']})
+st.dataframe(test_df)
+
 
 # CSV download
 
@@ -280,8 +286,8 @@ st.markdown("***The dashed red line indicates random chance accuracy of 0.25 as 
 st.markdown("***")
 st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
 
-selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=0)
-selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=3)
+selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=1)
+selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=4)
 
 if selected_x_column != selected_y_column:    # Avoid creating a plot with the same column on both axes
     fig = create_plot(filtered_data, selected_x_column, selected_y_column)

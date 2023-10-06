@@ -189,13 +189,6 @@ matching_columns = [col for col in filtered_data.columns if any(query.lower() in
 st.markdown("## Sortable Results")
 st.dataframe(filtered_data[matching_columns])
 
-# create a dataframe with one column that is titled link. the content is https://huggingface.co/garage-bAInd/Platypus2-70B-instruct
-# the link should be clickable
-# the link should open in a new tab
-test_df = pd.DataFrame({'link': ['[link](https://huggingface.co/garage-bAInd/Platypus2-70B-instruct)']})
-st.dataframe(test_df)
-
-
 # CSV download
 
 filtered_data.index.name = "Model Name"

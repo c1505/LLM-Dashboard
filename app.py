@@ -118,7 +118,7 @@ st.markdown("""
             Hugging Face runs evaluations on open source models and provides results on a
             [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 
             The Hugging Face leaderboard currently displays the overall result for Measuring Massive Multitask Language Understanding (MMLU), but not the results for individual tasks.
-            This app provides a way to explore the results for individual tasks and compare models across tasks.
+            This page provides a way to explore the results for individual tasks and compare models across tasks. Data for the benchmarks hellaswag, arc_challenge, and truthfulQA have also been included for comparison. 
             There are 57 tasks in the MMLU evaluation that cover a wide variety of subjects including Science, Math, Humanities, Social Science, Applied Science, Logic, and Security.
             [Preliminary analysis of MMLU-by-Task data](https://coreymorrisdata.medium.com/preliminary-analysis-of-mmlu-evaluation-data-insights-from-500-open-source-models-e67885aa364b)
             """)

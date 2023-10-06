@@ -191,6 +191,12 @@ class ResultDataProcessor:
         # drop rows if MMLU_abstract_algebra is NaN
         data = data.dropna(subset=['MMLU_abstract_algebra'])
 
+        # add a URL column that takes https://huggingface.co/ + full_model_name
+        data['URL'] = 'https://huggingface.co/' + data['full_model_name']
+
+        new_columns = ['URL'] + [col for col in data.columns if col != 'URL']
+        data = data.reindex(columns=new_columns)
+
         data.to_csv(f'processed_data_{pd.Timestamp.now().strftime("%Y-%m-%d")}.csv')
         
         return data

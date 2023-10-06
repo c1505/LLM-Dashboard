@@ -187,7 +187,19 @@ matching_columns = [col for col in filtered_data.columns if any(query.lower() in
 
 # Display the DataFrame with only the matching columns
 st.markdown("## Sortable Results")
-st.dataframe(filtered_data[matching_columns])
+# df_for_display = filtered_data[matching_columns]
+st.dataframe(
+# st.experimental_data_editor(
+    filtered_data[matching_columns],
+    column_config={
+        "URL": st.column_config.LinkColumn(
+            width="small"
+            # help="The top trending Streamlit apps",
+        )
+    },
+    hide_index=True,
+)
+# st.dataframe(filtered_data[matching_columns])
 
 
 import pandas as pd

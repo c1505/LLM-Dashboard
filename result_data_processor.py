@@ -96,7 +96,7 @@ class ResultDataProcessor:
 
     
     def process_data(self):
-        
+        full_model_names = []
         dataframes = []
         organization_names = []
         for filename in self._find_files(self.directory, self.pattern):
@@ -105,12 +105,14 @@ class ResultDataProcessor:
                 split_path = filename.split('/')
                 model_name = split_path[2]
                 organization_name = split_path[1]
+                full_model_name = f'{organization_name}/{model_name}'
                 cleaned_data = self._cleanup_dataframe(raw_data, model_name)
                 mc1 = self._extract_mc1(raw_data, model_name)
                 mc2 = self._extract_mc2(raw_data, model_name)
                 cleaned_data = pd.concat([cleaned_data, mc1])
                 cleaned_data = pd.concat([cleaned_data, mc2])
                 organization_names.append(organization_name)
+                full_model_names.append(full_model_name)
                 dataframes.append(cleaned_data)
             except Exception as e:
                 logging.error(f'Error processing {filename}')
@@ -122,6 +124,7 @@ class ResultDataProcessor:
 
         # Add organization column
         data['organization'] = organization_names
+        data['full_model_name'] = full_model_names
 
         # Add Model Name and rearrange columns
         data['Model Name'] = data.index
@@ -159,6 +162,8 @@ class ResultDataProcessor:
         cols = data.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         data = data[cols]
+
+        # create a 
 
         # remove extreme outliers from column harness|truthfulqa:mc1
         data = self._remove_mc1_outliers(data)

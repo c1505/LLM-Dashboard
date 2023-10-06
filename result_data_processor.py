@@ -96,34 +96,46 @@ class ResultDataProcessor:
 
     
     def process_data(self):
+        full_model_name_count = 0
         full_model_names = []
         dataframes = []
         organization_names = []
         for filename in self._find_files(self.directory, self.pattern):
-            try:
-                raw_data = self._read_and_transform_data(filename)
-                split_path = filename.split('/')
-                model_name = split_path[2]
-                organization_name = split_path[1]
-                full_model_name = f'{organization_name}/{model_name}'
-                cleaned_data = self._cleanup_dataframe(raw_data, model_name)
-                mc1 = self._extract_mc1(raw_data, model_name)
-                mc2 = self._extract_mc2(raw_data, model_name)
-                cleaned_data = pd.concat([cleaned_data, mc1])
-                cleaned_data = pd.concat([cleaned_data, mc2])
-                organization_names.append(organization_name)
-                full_model_names.append(full_model_name)
-                dataframes.append(cleaned_data)
-            except Exception as e:
-                logging.error(f'Error processing {filename}')
-                logging.error(f'The error is: {e}')
-                continue
+            # try:
+            raw_data = self._read_and_transform_data(filename)
+            split_path = filename.split('/')
+            model_name = split_path[2]
+            organization_name = split_path[1]
+            full_model_name = f'{organization_name}/{model_name}'
+            full_model_name_count += 1
+            # print count every 100 models
+            if full_model_name_count % 100 == 0:
+                print(full_model_name_count)
+
+            cleaned_data = self._cleanup_dataframe(raw_data, model_name)
+            # mc1 = self._extract_mc1(raw_data, full_model_name)
+            # mc2 = self._extract_mc2(raw_data, full_model_name)
+            # cleaned_data = pd.concat([cleaned_data, mc1])
+            # cleaned_data = pd.concat([cleaned_data, mc2])
+            organization_names.append(organization_name)
+            full_model_names.append(full_model_name)
+            dataframes.append(cleaned_data)
+            # except Exception as e:
+            #     # logging.error(f'Error processing {filename}')
+            #     # logging.error(f'The error is: {e}')
+            #     print(f'Error processing {filename}')
+            #     print(f'The error is: {e}')
+            #     continue
 
 
         data = pd.concat(dataframes, axis=1).transpose()
 
         # Add organization column
-        data['organization'] = organization_names
+        # data['organization'] = organization_names
+        print("full_model_names")
+        print(len(full_model_names))
+        print("organization_names")
+        print(len(organization_name))
         data['full_model_name'] = full_model_names
 
         # Add Model Name and rearrange columns
@@ -146,8 +158,8 @@ class ResultDataProcessor:
 
 
 
-        # Drop specific columns
-        data = data.drop(columns=['all', 'truthfulqa:mc|0'])
+        # # Drop specific columns
+        # data = data.drop(columns=['all', 'truthfulqa:mc|0'])
 
         # Add parameter count column using extract_parameters function
         data['Parameters'] = data.index.to_series().apply(self._extract_parameters)
@@ -158,17 +170,17 @@ class ResultDataProcessor:
         print(cols)
         data = data[cols]
 
-        # Reorder columns to move 'organization' to the second position
-        cols = data.columns.tolist()
-        cols = cols[-1:] + cols[:-1]
-        data = data[cols]
+        # # Reorder columns to move 'organization' to the second position
+        # cols = data.columns.tolist()
+        # cols = cols[-1:] + cols[:-1]
+        # data = data[cols]
 
         # create a 
 
         # remove extreme outliers from column harness|truthfulqa:mc1
-        data = self._remove_mc1_outliers(data)
+        # data = self._remove_mc1_outliers(data)
 
-        data = self.manual_removal_of_models(data)
+        # data = self.manual_removal_of_models(data)
 
         # save to csv with the current date as part of the filename
 

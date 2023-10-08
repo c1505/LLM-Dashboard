@@ -218,6 +218,9 @@ def create_plot(df, x_values, y_values, models=None, title=None):
     # remove rows with NaN values
     df = df.dropna(subset=[x_values, y_values])
 
+    #remove label rows URL, full_model_name
+    df = df.drop(columns=['URL', 'full_model_name'])
+
     plot_data = pd.DataFrame({
         'Model': df.index,
         x_values: df[x_values],
@@ -288,8 +291,11 @@ st.markdown("***The dashed red line indicates random chance accuracy of 0.25 as 
 st.markdown("***")
 st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
 
-selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=1)
-selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=4)
+column_list_for_plotting = filtered_data.columns.tolist()
+column_list_for_plotting.remove('URL')
+column_list_for_plotting.remove('full_model_name')
+selected_x_column = st.selectbox('Select x-axis', column_list_for_plotting, index=0)
+selected_y_column = st.selectbox('Select y-axis', column_list_for_plotting, index=1)
 
 if selected_x_column != selected_y_column:    # Avoid creating a plot with the same column on both axes
     fig = create_plot(filtered_data, selected_x_column, selected_y_column)

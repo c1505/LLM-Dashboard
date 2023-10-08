@@ -142,21 +142,17 @@ parameter_threshold = st.selectbox(
     index=4,  # Set the default selected option to 'No threshold'
     format_func=lambda x: f"{x}" if isinstance(x, int) else x
 )
-
-# Existing code for parameter threshold
 if isinstance(parameter_threshold, int):
     filtered_data = filtered_data[filtered_data['Parameters'] <= parameter_threshold]
 
-# Modified code to support multiple search queries for model names, separated by commas
+# model name filtering
 search_queries = st.text_input("Filter by Model Name:", "").replace(" ", "").split(',')
 if search_queries:
     filtered_data = filtered_data[filtered_data.index.str.contains('|'.join(search_queries), case=False)]
 
-# Existing code for column/task name filtering
+# column name filtering
 column_search_query = st.text_input("Filter by Column/Task Name:", "").replace(" ", "").split(',')
 matching_columns = [col for col in filtered_data.columns if any(query.lower() in col.lower() for query in column_search_query)]
-
-# Filter the DataFrame based on matching_columns
 filtered_data = filtered_data[matching_columns]
 
 
@@ -165,7 +161,7 @@ st.markdown("## Sortable Results")
 st.dataframe(
     filtered_data[matching_columns],
     column_config={
-        "URL": st.column_config.LinkColumn( # Only current way to make url a clickable link with streamlit without removing the interactivit
+        "URL": st.column_config.LinkColumn( # Only current way to make url a clickable link with streamlit without removing the interactivity of the table
             width="small"
         )
     },
@@ -277,9 +273,9 @@ else:
     st.write("Please select different columns for the x and y axes.")
 
 
-
-
 # end of custom scatter plots
+
+
 
 # # Section to select a model and display radar and line charts
 # st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")

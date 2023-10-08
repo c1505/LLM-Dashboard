@@ -127,34 +127,9 @@ st.markdown("""
 data_path = "processed_data_2023-10-08.csv"
 data_df = load_csv_data(data_path)
 # drop the column Unnamed: 0
-# data_df.drop(columns=['Unnamed: 0'], inplace=True)
 data_df.rename(columns={'Unnamed: 0': "Model Name"}, inplace=True)
 data_df.set_index("Model Name", inplace=True)
 
-filters = st.checkbox('Select Models and/or Evaluations')
-
-# Initialize selected columns with "Parameters" and "MMLU_average" if filters are checked
-selected_columns = ['Parameters', 'MMLU_average'] if filters else data_df.columns.tolist()
-
-# Initialize selected models as empty if filters are checked
-selected_models = [] if filters else data_df.index.tolist()
-
-if filters:
-    # Create multi-select for columns with default selection
-    selected_columns = st.multiselect(
-        'Select Columns',
-        data_df.columns.tolist(),
-        default=selected_columns
-    )
-
-    # Create multi-select for models without default selection
-    selected_models = st.multiselect(
-        'Select Models',
-        data_df.index.tolist()
-    )
-
-# Get the filtered data
-# filtered_data = data_provider.get_data(selected_models)
 filtered_data = data_df
 
 # sort the table by the MMLU_average column

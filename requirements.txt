@@ -1,5 +1,5 @@
 # replicating the current hugging face streamlit and pandas versions
-streamlit==1.21.0
+streamlit==1.25.0
 pandas==1.5.3
 
 # Other

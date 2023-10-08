@@ -95,7 +95,7 @@ def create_line_chart(df, model_names, metrics):
     fig.update_layout(showlegend=True)
     return fig
 
-def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters', 'organization']):
+def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters']):
     # Calculate the absolute differences for each task between the target model and the closest models
     new_df = df.drop(columns=exclude_columns)
     differences = new_df.loc[closest_models].sub(new_df.loc[target_model]).abs()
@@ -124,35 +124,12 @@ st.markdown("""
             """)
 
 # Load the data into memory
-data_path = "processed_data_2023-10-06.csv"
+data_path = "processed_data_2023-10-08.csv"
 data_df = load_csv_data(data_path)
-data_df.rename(columns={"Unnamed: 0": "Model Name"}, inplace=True)
+# drop the column Unnamed: 0
+data_df.rename(columns={'Unnamed: 0': "Model Name"}, inplace=True)
 data_df.set_index("Model Name", inplace=True)
 
-filters = st.checkbox('Select Models and/or Evaluations')
-
-# Initialize selected columns with "Parameters" and "MMLU_average" if filters are checked
-selected_columns = ['Parameters', 'MMLU_average'] if filters else data_df.columns.tolist()
-
-# Initialize selected models as empty if filters are checked
-selected_models = [] if filters else data_df.index.tolist()
-
-if filters:
-    # Create multi-select for columns with default selection
-    selected_columns = st.multiselect(
-        'Select Columns',
-        data_df.columns.tolist(),
-        default=selected_columns
-    )
-
-    # Create multi-select for models without default selection
-    selected_models = st.multiselect(
-        'Select Models',
-        data_df.index.tolist()
-    )
-
-# Get the filtered data
-# filtered_data = data_provider.get_data(selected_models)
 filtered_data = data_df
 
 # sort the table by the MMLU_average column
@@ -165,32 +142,33 @@ parameter_threshold = st.selectbox(
     index=4,  # Set the default selected option to 'No threshold'
     format_func=lambda x: f"{x}" if isinstance(x, int) else x
 )
-
-# Filter the DataFrame based on the selected parameter threshold if not 'No threshold'
 if isinstance(parameter_threshold, int):
     filtered_data = filtered_data[filtered_data['Parameters'] <= parameter_threshold]
 
+# model name filtering
+search_queries = st.text_input("Filter by Model Name:", "").replace(" ", "").split(',')
+if search_queries:
+    filtered_data = filtered_data[filtered_data.index.str.contains('|'.join(search_queries), case=False)]
 
-# Search box
-search_query = st.text_input("Filter by Model Name:", "")
-
-# Filter the DataFrame based on the search query in the index (model name)
-if search_query:
-    filtered_data = filtered_data[filtered_data.index.str.contains(search_query, case=False)]
-
-
-# Search box for columns
+# column name filtering
 column_search_query = st.text_input("Filter by Column/Task Name:", "").replace(" ", "").split(',')
-
-# Get the columns that contain the search query
 matching_columns = [col for col in filtered_data.columns if any(query.lower() in col.lower() for query in column_search_query)]
+filtered_data = filtered_data[matching_columns]
+
 
 # Display the DataFrame with only the matching columns
 st.markdown("## Sortable Results")
-st.dataframe(filtered_data[matching_columns])
+st.dataframe(
+    filtered_data[matching_columns],
+    column_config={
+        "URL": st.column_config.LinkColumn( # Only current way to make url a clickable link with streamlit without removing the interactivity of the table
+            width="small"
+        )
+    },
+    hide_index=True,
+)
 
 # CSV download
-
 filtered_data.index.name = "Model Name"
 
 csv = filtered_data.to_csv(index=True)
@@ -208,6 +186,9 @@ def create_plot(df, x_values, y_values, models=None, title=None):
 
     # remove rows with NaN values
     df = df.dropna(subset=[x_values, y_values])
+
+    #remove label rows URL, full_model_name
+    df = df.drop(columns=['URL', 'full_model_name'])
 
     plot_data = pd.DataFrame({
         'Model': df.index,
@@ -279,8 +260,11 @@ st.markdown("***The dashed red line indicates random chance accuracy of 0.25 as 
 st.markdown("***")
 st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
 
-selected_x_column = st.selectbox('Select x-axis', filtered_data.columns.tolist(), index=1)
-selected_y_column = st.selectbox('Select y-axis', filtered_data.columns.tolist(), index=4)
+column_list_for_plotting = filtered_data.columns.tolist()
+column_list_for_plotting.remove('URL')
+column_list_for_plotting.remove('full_model_name')
+selected_x_column = st.selectbox('Select x-axis', column_list_for_plotting, index=0)
+selected_y_column = st.selectbox('Select y-axis', column_list_for_plotting, index=1)
 
 if selected_x_column != selected_y_column:    # Avoid creating a plot with the same column on both axes
     fig = create_plot(filtered_data, selected_x_column, selected_y_column)
@@ -289,44 +273,44 @@ else:
     st.write("Please select different columns for the x and y axes.")
 
 
-
-
 # end of custom scatter plots
 
-# Section to select a model and display radar and line charts
-st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
-st.write("""
-         This comparison highlights the nuances in model performance across different tasks. 
-         While the overall MMLU average score provides a general understanding of a model's capabilities, 
-         examining the closest models reveals variations in performance on individual tasks. 
-         Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
-         """)
 
-default_model_name = "GPT-JT-6B-v0"
 
-default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
-selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
+# # Section to select a model and display radar and line charts
+# st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
+# st.write("""
+#          This comparison highlights the nuances in model performance across different tasks. 
+#          While the overall MMLU average score provides a general understanding of a model's capabilities, 
+#          examining the closest models reveals variations in performance on individual tasks. 
+#          Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
+#          """)
 
-# Get the closest 5 models with unique indices
-closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
-closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
+# default_model_name = "GPT-JT-6B-v0"
+
+# default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
+# selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
+
+# # Get the closest 5 models with unique indices
+# closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
+# closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
 
 
 # Find the top 10 tasks with the largest differences and convert to a DataFrame
-top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
+# top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
 
 # Display the DataFrame for the closest models and the top differences tasks
-st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
+# st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
 
 # # Display the table in the Streamlit app
 # st.markdown("## Top Differences")
 # st.dataframe(top_differences_table)
 
 # Create a radar chart for the tasks with the largest differences
-fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
+# fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
 
 # Display the radar chart
-st.plotly_chart(fig_radar_top_differences)
+# st.plotly_chart(fig_radar_top_differences)
 
 
 st.markdown("## Notable findings and plots")

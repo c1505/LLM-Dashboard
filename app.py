@@ -95,7 +95,7 @@ def create_line_chart(df, model_names, metrics):
     fig.update_layout(showlegend=True)
     return fig
 
-def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters', 'organization']):
+def find_top_differences_table(df, target_model, closest_models, num_differences=10, exclude_columns=['Parameters']):
     # Calculate the absolute differences for each task between the target model and the closest models
     new_df = df.drop(columns=exclude_columns)
     differences = new_df.loc[closest_models].sub(new_df.loc[target_model]).abs()
@@ -308,40 +308,40 @@ else:
 
 # end of custom scatter plots
 
-# Section to select a model and display radar and line charts
-st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
-st.write("""
-         This comparison highlights the nuances in model performance across different tasks. 
-         While the overall MMLU average score provides a general understanding of a model's capabilities, 
-         examining the closest models reveals variations in performance on individual tasks. 
-         Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
-         """)
+# # Section to select a model and display radar and line charts
+# st.header("Compare a Selected Model to the 5 Models Closest in MMLU Average Performance")
+# st.write("""
+#          This comparison highlights the nuances in model performance across different tasks. 
+#          While the overall MMLU average score provides a general understanding of a model's capabilities, 
+#          examining the closest models reveals variations in performance on individual tasks. 
+#          Such an analysis can uncover specific strengths and weaknesses and guide further exploration and improvement.
+#          """)
 
-default_model_name = "GPT-JT-6B-v0"
+# default_model_name = "GPT-JT-6B-v0"
 
-default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
-selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
+# default_model_index = filtered_data.index.tolist().index(default_model_name) if default_model_name in filtered_data.index else 0
+# selected_model_name = st.selectbox("Select a Model:", filtered_data.index.tolist(), index=default_model_index)
 
-# Get the closest 5 models with unique indices
-closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
-closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
+# # Get the closest 5 models with unique indices
+# closest_models_diffs = filtered_data['MMLU_average'].sub(filtered_data.loc[selected_model_name, 'MMLU_average']).abs()
+# closest_models = closest_models_diffs.nsmallest(5, keep='first').index.drop_duplicates().tolist()
 
 
 # Find the top 10 tasks with the largest differences and convert to a DataFrame
-top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
+# top_differences_table, top_differences_tasks = find_top_differences_table(filtered_data, selected_model_name, closest_models)
 
 # Display the DataFrame for the closest models and the top differences tasks
-st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
+# st.dataframe(filtered_data.loc[closest_models, top_differences_tasks])
 
 # # Display the table in the Streamlit app
 # st.markdown("## Top Differences")
 # st.dataframe(top_differences_table)
 
 # Create a radar chart for the tasks with the largest differences
-fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
+# fig_radar_top_differences = create_radar_chart_unfilled(filtered_data, closest_models, top_differences_tasks)
 
 # Display the radar chart
-st.plotly_chart(fig_radar_top_differences)
+# st.plotly_chart(fig_radar_top_differences)
 
 
 st.markdown("## Notable findings and plots")

@@ -158,8 +158,7 @@ class ResultDataProcessor:
 
 
 
-        # # Drop specific columns
-        # data = data.drop(columns=['all', 'truthfulqa:mc|0'])
+
 
         # Add parameter count column using extract_parameters function
         data['Parameters'] = data.index.to_series().apply(self._extract_parameters)
@@ -179,14 +178,11 @@ class ResultDataProcessor:
         # cols = cols[-1:] + cols[:-1]
         # data = data[cols]
 
-        # create a 
-
         # remove extreme outliers from column harness|truthfulqa:mc1
         # data = self._remove_mc1_outliers(data)
 
-        # data = self.manual_removal_of_models(data)
+        data = self.manual_removal_of_models(data)
 
-        # save to csv with the current date as part of the filename
 
         # drop rows if MMLU_abstract_algebra is NaN
         data = data.dropna(subset=['MMLU_abstract_algebra'])
@@ -197,6 +193,12 @@ class ResultDataProcessor:
         new_columns = ['URL'] + [col for col in data.columns if col != 'URL']
         data = data.reindex(columns=new_columns)
 
+        # drop columns drop|3 gsm8k and winogrande
+        data = data.drop(columns=['drop|3', 'gsm8k', 'winogrande'])
+        # # Drop specific columns
+        data = data.drop(columns=['all', 'truthfulqa:mc|0'])
+
+        # save to csv with the current date as part of the filename
         data.to_csv(f'processed_data_{pd.Timestamp.now().strftime("%Y-%m-%d")}.csv')
         
         return data

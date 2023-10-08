@@ -124,9 +124,11 @@ st.markdown("""
             """)
 
 # Load the data into memory
-data_path = "processed_data_2023-10-06.csv"
+data_path = "processed_data_2023-10-08.csv"
 data_df = load_csv_data(data_path)
-data_df.rename(columns={"Unnamed: 0": "Model Name"}, inplace=True)
+# drop the column Unnamed: 0
+# data_df.drop(columns=['Unnamed: 0'], inplace=True)
+data_df.rename(columns={'Unnamed: 0': "Model Name"}, inplace=True)
 data_df.set_index("Model Name", inplace=True)
 
 filters = st.checkbox('Select Models and/or Evaluations')
@@ -187,51 +189,17 @@ matching_columns = [col for col in filtered_data.columns if any(query.lower() in
 
 # Display the DataFrame with only the matching columns
 st.markdown("## Sortable Results")
-# df_for_display = filtered_data[matching_columns]
 st.dataframe(
-# st.experimental_data_editor(
     filtered_data[matching_columns],
     column_config={
-        "URL": st.column_config.LinkColumn(
+        "URL": st.column_config.LinkColumn( # Only current way to make url a clickable link with streamlit without removing the interactivit
             width="small"
-            # help="The top trending Streamlit apps",
-        )
-    },
-    hide_index=True,
-)
-# st.dataframe(filtered_data[matching_columns])
-
-
-import pandas as pd
-# import streamlit as st
-
-data_df = pd.DataFrame(
-    {
-        "apps": [
-            "https://roadmap.streamlit.app",
-            "https://extras.streamlit.app",
-            "https://issues.streamlit.app",
-            "https://30days.streamlit.app",
-        ],
-    }
-)
-
-st.data_editor(
-# st.experimental_data_editor(
-    data_df,
-    column_config={
-        "apps": st.column_config.LinkColumn(
-            "Trending apps",
-            help="The top trending Streamlit apps",
-            validate="^https://[a-z]+\.streamlit\.app$",
-            max_chars=100,
         )
     },
     hide_index=True,
 )
 
 # CSV download
-
 filtered_data.index.name = "Model Name"
 
 csv = filtered_data.to_csv(index=True)

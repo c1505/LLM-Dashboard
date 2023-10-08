@@ -143,24 +143,22 @@ parameter_threshold = st.selectbox(
     format_func=lambda x: f"{x}" if isinstance(x, int) else x
 )
 
-# Filter the DataFrame based on the selected parameter threshold if not 'No threshold'
+# Existing code for parameter threshold
 if isinstance(parameter_threshold, int):
     filtered_data = filtered_data[filtered_data['Parameters'] <= parameter_threshold]
 
+# Modified code to support multiple search queries for model names, separated by commas
+search_queries = st.text_input("Filter by Model Name:", "").replace(" ", "").split(',')
+if search_queries:
+    filtered_data = filtered_data[filtered_data.index.str.contains('|'.join(search_queries), case=False)]
 
-# Search box
-search_query = st.text_input("Filter by Model Name:", "")
-
-# Filter the DataFrame based on the search query in the index (model name)
-if search_query:
-    filtered_data = filtered_data[filtered_data.index.str.contains(search_query, case=False)]
-
-
-# Search box for columns
+# Existing code for column/task name filtering
 column_search_query = st.text_input("Filter by Column/Task Name:", "").replace(" ", "").split(',')
-
-# Get the columns that contain the search query
 matching_columns = [col for col in filtered_data.columns if any(query.lower() in col.lower() for query in column_search_query)]
+
+# Filter the DataFrame based on matching_columns
+filtered_data = filtered_data[matching_columns]
+
 
 # Display the DataFrame with only the matching columns
 st.markdown("## Sortable Results")

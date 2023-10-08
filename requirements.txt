@@ -10,4 +10,4 @@ matplotlib
 
 
 # replicating the current hugging face streamlit and pandas versions
-streamlit==1.25.0
+# streamlit>=1.25.0

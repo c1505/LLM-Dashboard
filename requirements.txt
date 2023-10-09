@@ -1,13 +1,13 @@
 
-# pandas==1.5.3
+pandas==1.5.3
 
 # Other
-# plotly==5.14.1
-plotly
+plotly==5.14.1
+# plotly
 statsmodels
 numpy
 matplotlib
 
 
-# replicating the current hugging face streamlit and pandas versions
-# streamlit>=1.25.0
+# the README overrides the version here so make sure they match
+streamlit==1.25.0

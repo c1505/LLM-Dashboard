@@ -115,9 +115,6 @@ st.title('Interactive Portal for Analyzing Open Source Large Language Models')
 st.markdown("""***Last updated October 6th***""")
 st.markdown("""**Models that are suspected to have training data contaminated with evaluation data have been removed.**""")
 st.markdown("""
-            Hugging Face runs evaluations on open source models and provides results on a
-            [publicly available leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) and [dataset](https://huggingface.co/datasets/open-llm-leaderboard/results). 
-            The Hugging Face leaderboard currently displays the overall result for Measuring Massive Multitask Language Understanding (MMLU), but not the results for individual tasks.
             This page provides a way to explore the results for individual tasks and compare models across tasks. Data for the benchmarks hellaswag, arc_challenge, and truthfulQA have also been included for comparison. 
             There are 57 tasks in the MMLU evaluation that cover a wide variety of subjects including Science, Math, Humanities, Social Science, Applied Science, Logic, and Security.
             [Preliminary analysis of MMLU-by-Task data](https://coreymorrisdata.medium.com/preliminary-analysis-of-mmlu-evaluation-data-insights-from-500-open-source-models-e67885aa364b)
@@ -260,9 +257,13 @@ st.markdown("***The dashed red line indicates random chance accuracy of 0.25 as 
 st.markdown("***")
 st.write("As expected, there is a strong positive relationship between the number of parameters and average performance on the MMLU evaluation.")
 
+
 column_list_for_plotting = filtered_data.columns.tolist()
-column_list_for_plotting.remove('URL')
-column_list_for_plotting.remove('full_model_name')
+if 'URL' in column_list_for_plotting:
+    column_list_for_plotting.remove('URL')
+if 'full_model_name' in column_list_for_plotting:
+    column_list_for_plotting.remove('full_model_name')
+
 selected_x_column = st.selectbox('Select x-axis', column_list_for_plotting, index=0)
 selected_y_column = st.selectbox('Select y-axis', column_list_for_plotting, index=1)
 

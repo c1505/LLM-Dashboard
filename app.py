@@ -112,8 +112,9 @@ def find_top_differences_table(df, target_model, closest_models, num_differences
 
 # st.title('Model Evaluation Results including MMLU by task')
 st.title('Interactive Portal for Analyzing Open Source Large Language Models')
-st.markdown("""***Last updated November 21th***""")
-st.markdown("""**Models that are suspected to have training data contaminated with evaluation data have been removed.**""")
+st.markdown("""***Last updated March 17th 2024***""")
+st.markdown("""**It has not been updated to correctly extract the parameter number from mixture of experts models.**""")
+st.markdown("""**As of 04-17-2024, this data was not generated using the chat templates. Smaller models are especially sensative to this and other aspects related to the format of the inputs.**""")
 st.markdown("""
             This page provides a way to explore the results for individual tasks and compare models across tasks. Data for the benchmarks hellaswag, arc_challenge, and truthfulQA have also been included for comparison. 
             There are 57 tasks in the MMLU evaluation that cover a wide variety of subjects including Science, Math, Humanities, Social Science, Applied Science, Logic, and Security.
@@ -121,7 +122,7 @@ st.markdown("""
             """)
 
 # Load the data into memory
-data_path = "processed_data_2023-11-21.csv"
+data_path = "processed_data_2024-04-16.csv"
 data_df = load_csv_data(data_path)
 # drop the column Unnamed: 0
 data_df.rename(columns={'Unnamed: 0': "Model Name"}, inplace=True)
